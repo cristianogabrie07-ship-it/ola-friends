@@ -5,8 +5,8 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  promo_price?: number;
-  image?: string;
+  promo_price?: number | null;
+  image?: string | null;
   quantity: number;
   size?: string;
 }
