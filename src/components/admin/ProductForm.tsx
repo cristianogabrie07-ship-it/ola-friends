@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,16 +31,16 @@ import { Tables } from "@/integrations/supabase/types";
 
 const productSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   price: z.coerce.number().min(0.01, "Preço deve ser maior que zero"),
-  promo_price: z.coerce.number().optional().nullable(),
+  promo_price: z.coerce.number().nullable().optional(),
   category_id: z.string().min(1, "Categoria é obrigatória"),
   stock: z.coerce.number().min(0, "Estoque não pode ser negativo"),
-  is_active: z.boolean().default(true),
-  is_sold_out: z.boolean().default(false),
-  sizes: z.array(z.string()).default([]),
+  is_active: z.boolean(),
+  is_sold_out: z.boolean(),
+  sizes: z.array(z.string()),
   images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória"),
-  water_resistance: z.string().optional().nullable(),
+  water_resistance: z.string().nullable().optional(),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
@@ -61,7 +60,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: initialData?.name || "",
-      description: initialData?.description || "",
+      description: initialData?.description || null,
       price: initialData?.price || 0,
       promo_price: initialData?.promo_price || null,
       category_id: initialData?.category_id || "",
@@ -69,10 +68,11 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
       is_active: initialData?.is_active ?? true,
       is_sold_out: initialData?.is_sold_out ?? false,
       sizes: initialData?.sizes || [],
-      images: initialData?.images || [""],
-      water_resistance: initialData?.water_resistance || "",
+      images: initialData?.images || [],
+      water_resistance: initialData?.water_resistance || null,
     },
   });
+
 
   const selectedCategoryId = form.watch("category_id");
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
