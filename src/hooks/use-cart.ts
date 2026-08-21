@@ -8,7 +8,7 @@ interface CartItem {
   promo_price?: number | null;
   image?: string | null;
   quantity: number;
-  size?: string;
+  size?: string | null;
 }
 
 interface CartStore {
