@@ -25,7 +25,7 @@ export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      addItem: (newItem) => {
+      addItem: (newItem: CartItem) => {
         const items = get().items;
         const existingItem = items.find(
           (item) => item.id === newItem.id && item.size === newItem.size
@@ -43,12 +43,12 @@ export const useCart = create<CartStore>()(
           set({ items: [...items, newItem] });
         }
       },
-      removeItem: (id, size) => {
+      removeItem: (id: string, size?: string) => {
         set({
           items: get().items.filter((item) => !(item.id === id && item.size === size)),
         });
       },
-      updateQuantity: (id, size, quantity) => {
+      updateQuantity: (id: string, size: string | undefined, quantity: number) => {
         if (quantity <= 0) {
           get().removeItem(id, size);
           return;
@@ -61,11 +61,11 @@ export const useCart = create<CartStore>()(
       },
       clearCart: () => set({ items: [] }),
       get itemsCount() {
-        return get().items.reduce((acc, item) => acc + item.quantity, 0);
+        return get().items.reduce((acc: number, item: CartItem) => acc + item.quantity, 0);
       },
       get total() {
         return get().items.reduce(
-          (acc, item) => acc + (item.promo_price || item.price) * item.quantity,
+          (acc: number, item: CartItem) => acc + (item.promo_price || item.price) * item.quantity,
           0
         );
       },
