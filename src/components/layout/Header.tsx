@@ -50,7 +50,7 @@ export function Header() {
         <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-8 font-bold text-sm uppercase">
           <Link to="/" className="hover:underline">Início</Link>
           <Link to="/shop" className="hover:underline">Categorias</Link>
-          <Link to="/shop?sale=true" className="hover:underline text-red-100">Liquidação</Link>
+          <Link to="/shop" search={{ sale: true }} className="hover:underline text-red-100">Liquidação</Link>
         </div>
       </nav>
 
@@ -60,7 +60,7 @@ export function Header() {
           <div className="container mx-auto px-4 py-4 flex flex-col gap-4 font-bold uppercase text-sm">
             <Link to="/" onClick={() => setIsMenuOpen(false)}>Início</Link>
             <Link to="/shop" onClick={() => setIsMenuOpen(false)}>Categorias</Link>
-            <Link to="/shop?sale=true" onClick={() => setIsMenuOpen(false)} className="text-red-100">Liquidação</Link>
+            <Link to="/shop" search={{ sale: true }} onClick={() => setIsMenuOpen(false)} className="hover:underline text-red-100">Liquidação</Link>
             <div className="relative mt-2">
               <input
                 type="text"
