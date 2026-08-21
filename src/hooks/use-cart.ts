@@ -5,10 +5,10 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
-  promo_price?: number | null;
-  image?: string | null;
+  promo_price?: number | null | undefined;
+  image?: string | null | undefined;
   quantity: number;
-  size?: string | null;
+  size?: string | null | undefined;
 }
 
 interface CartStore {
