@@ -36,14 +36,15 @@ const productSchema = z.object({
   promo_price: z.coerce.number().nullable().optional(),
   category_id: z.string().min(1, "Categoria é obrigatória"),
   stock: z.coerce.number().min(0, "Estoque não pode ser negativo"),
-  is_active: z.boolean(),
-  is_sold_out: z.boolean(),
-  sizes: z.array(z.string()),
-  images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória"),
+  is_active: z.boolean().nullable().optional(),
+  is_sold_out: z.boolean().nullable().optional(),
+  sizes: z.array(z.string()).nullable().optional(),
+  images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória").nullable().optional(),
   water_resistance: z.string().nullable().optional(),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
+
 
 interface ProductFormProps {
   open: boolean;

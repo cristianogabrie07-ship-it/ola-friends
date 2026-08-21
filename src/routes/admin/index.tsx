@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export const Route = createFileRoute('/admin/')({
   component: AdminDashboard,
 });
+
 
 function AdminDashboard() {
   const { data: stats } = useQuery({
@@ -36,9 +37,10 @@ function AdminDashboard() {
       <div className="bg-white p-6 border border-border shadow-sm">
         <h2 className="font-bold uppercase mb-4">Ações Rápidas</h2>
         <div className="flex gap-4">
-          <button className="bg-primary text-white px-4 py-2 font-bold uppercase text-xs">Novo Produto</button>
-          <button className="border border-primary text-primary px-4 py-2 font-bold uppercase text-xs">Criar Cupom</button>
+          <Link to="/admin/products" className="bg-primary text-primary-foreground px-4 py-2 font-bold uppercase text-xs">Gerenciar Produtos</Link>
+          <Link to="/admin/coupons" className="border border-primary text-primary px-4 py-2 font-bold uppercase text-xs">Gerenciar Cupons</Link>
         </div>
+
       </div>
     </div>
   );
