@@ -9,6 +9,10 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Tables } from "@/integrations/supabase/types";
 
+// Workaround for exactOptionalPropertyTypes
+type ProductUpdate = Partial<Tables<"products">> & { id: string };
+
+
 export const Route = createFileRoute("/admin/products")({
   component: ProductsPage,
 });
@@ -55,15 +59,16 @@ function ProductsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...values }: any) => {
+    mutationFn: async ({ id, ...values }: ProductUpdate) => {
       // Auto-sold-out logic
-      const isSoldOut = values.stock <= 0 ? true : values.is_sold_out;
+      const isSoldOut = (values.stock !== undefined && values.stock !== null && values.stock <= 0) ? true : values.is_sold_out;
       const { error } = await supabase
         .from("products")
-        .update({ ...values, is_sold_out: isSoldOut })
+        .update({ ...values, is_sold_out: isSoldOut } as any)
         .eq("id", id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       toast.success("Produto atualizado com sucesso!");
@@ -148,9 +153,10 @@ function ProductsPage() {
           if (!open) setEditingProduct(null);
         }}
         onSubmit={handleSubmit}
-        initialData={editingProduct ?? undefined}
+        initialData={(editingProduct as any) ?? undefined}
         categories={categories || []}
       />
+
 
     </div>
   );

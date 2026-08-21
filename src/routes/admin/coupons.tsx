@@ -9,6 +9,9 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Tables } from "@/integrations/supabase/types";
 
+type CouponUpdate = Partial<Tables<"coupons">> & { id: string };
+
+
 export const Route = createFileRoute("/admin/coupons")({
   component: CouponsPage,
 });
@@ -46,13 +49,14 @@ function CouponsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...values }: any) => {
+    mutationFn: async ({ id, ...values }: CouponUpdate) => {
       const { error } = await supabase
         .from("coupons")
-        .update(values)
+        .update(values as any)
         .eq("id", id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-coupons"] });
       toast.success("Cupom atualizado com sucesso!");
@@ -122,8 +126,9 @@ function CouponsPage() {
           if (!open) setEditingCoupon(null);
         }}
         onSubmit={handleSubmit}
-        initialData={editingCoupon ?? undefined}
+        initialData={(editingCoupon as any) ?? undefined}
       />
+
 
     </div>
   );
