@@ -122,8 +122,9 @@ function CouponsPage() {
           if (!open) setEditingCoupon(null);
         }}
         onSubmit={handleSubmit}
-        initialData={editingCoupon || undefined}
+        initialData={editingCoupon ?? undefined}
       />
+
     </div>
   );
 }

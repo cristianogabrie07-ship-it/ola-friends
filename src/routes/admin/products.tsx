@@ -148,9 +148,10 @@ function ProductsPage() {
           if (!open) setEditingProduct(null);
         }}
         onSubmit={handleSubmit}
-        initialData={editingProduct || undefined}
+        initialData={editingProduct ?? undefined}
         categories={categories || []}
       />
+
     </div>
   );
 }

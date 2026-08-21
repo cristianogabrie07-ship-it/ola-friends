@@ -217,7 +217,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox
-                            checked={field.value?.includes(size)}
+                            checked={field.value?.includes(size) ?? false}
                             onCheckedChange={(checked) => {
                               const current = field.value || [];
                               return checked
@@ -226,6 +226,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
                             }}
                           />
                         </FormControl>
+
                         <FormLabel className="text-sm font-normal">{size}</FormLabel>
                       </FormItem>
                     )}
@@ -260,7 +261,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Checkbox checked={field.value ?? true} onCheckedChange={field.onChange} />
                     </FormControl>
                     <FormLabel className="text-sm font-bold uppercase">Ativo</FormLabel>
                   </FormItem>
@@ -273,12 +274,13 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
                 render={({ field }) => (
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <Checkbox checked={field.value ?? false} onCheckedChange={field.onChange} />
                     </FormControl>
                     <FormLabel className="text-sm font-bold uppercase">Esgotado</FormLabel>
                   </FormItem>
                 )}
               />
+
             </div>
 
             <DialogFooter>
