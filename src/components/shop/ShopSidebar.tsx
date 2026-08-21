@@ -14,7 +14,7 @@ const categories = [
 
 const sizes = ["P", "M", "G", "GG", "EXG"];
 
-export function ShopSidebar({ currentCategory }: { currentCategory?: string }) {
+export function ShopSidebar({ currentCategory }: { currentCategory?: string | undefined }) {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
 
   return (
