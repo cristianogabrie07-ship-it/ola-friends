@@ -5,54 +5,54 @@ Build a complete sports apparel e-commerce site with integrated PIX payments and
 ## User Review Required
 
 > [!IMPORTANT]
-> The site will include an admin panel at `/admin`. Please specify if you have a preferred email for the initial admin user, or I will set up the structure for you to register yourself.
+> The admin panel at `/admin` will be protected by a role check. As requested, no admin user will be seeded. After you register your account through the site's login page, you will need to manually grant yourself the `admin` role in the `user_roles` table.
 
 ## Proposed Changes
 
 ### 1. Database & Auth (Lovable Cloud)
-- Create `products` table: `id`, `name`, `description`, `price`, `promo_price`, `stock`, `sizes` (array), `category`, `images` (array), `water_resistance` (for watches), `is_active`, `is_sold_out`.
-- Create `categories` table: `id`, `name`, `slug`, `image`.
+- Create `products` table: `id`, `name`, `description`, `price`, `promo_price`, `stock`, `sizes` (array), `category_id`, `images` (array), `water_resistance` (for watches), `is_active`, `is_sold_out`.
+- Create `categories` table: `id`, `name`, `slug`, `image_url`.
 - Create `orders` table: `id`, `user_id`, `total`, `status`, `payment_method`, `customer_details` (JSON), `items` (JSON).
 - Create `coupons` table: `id`, `code`, `discount_percent`, `expiry`, `usage_limit`.
-- Set up `user_roles` for Admin access.
+- Set up `app_role` enum and `user_roles` table for Admin access.
 - Enable RLS and set grants for `authenticated` and `anon` roles.
+- Create `has_role` security definer function.
 
 ### 2. Styling & Layout (`src/styles.css`, `src/routes/__root.tsx`)
 - Configure Tailwind v4 with the gold/mustard (#C9A227) theme.
-- Import "Bungee" Google Font in `__root.tsx`.
+- Import "Bungee" Google Font via `<link>` in `__root.tsx`.
 - Implement the two-line gold header and footer.
 - Add floating WhatsApp button.
 
 ### 3. Core Features & Routes
-- **Index (`/`)**: Hero banner with Bungee font, category carousel (circles with gold borders), featured products.
-- **Shop (`/shop`)**: Product listing with sidebar filters (category, size, price, sorting).
-- **Product (`/product/$id`)**: Image gallery, size selection, WhatsApp/PIX purchase buttons.
-- **Cart & Checkout**: Persistent cart using local storage, coupon application, customer data form, PIX integration placeholder.
+- **Index (`/`)**: Hero banner (Bungee font), category carousel, featured products.
+- **Shop (`/shop`)**: Product listing with filters (category, size, price, sorting).
+- **Product (`/product/$id`)**: Image gallery, size selection, WhatsApp/PIX buttons.
+- **Cart & Checkout**: Persistent cart, coupon logic, customer form.
 
 ### 4. Admin Panel (`/admin`)
-- Protected route using Supabase Auth and `has_role` check.
-- Dashboard with sales metrics.
-- CRUD interfaces for Products, Categories, and Coupons.
-- Order management with status updates.
+- Protected route using `has_role(auth.uid(), 'admin')`.
+- Dashboard and CRUDs for Products, Categories, and Coupons.
+- Order management.
 
 ## Technical Details
-- **Framework**: TanStack Start v1 (React 19).
+- **Framework**: TanStack Start v1.
 - **Styling**: Tailwind CSS v4.
-- **Backend**: Lovable Cloud (PostgreSQL + Auth).
+- **Backend**: Lovable Cloud (Supabase).
 - **Icons**: Lucide React.
-- **State Management**: TanStack Query for data, simple hook for Cart.
+- **Database**: PostgreSQL with RLS.
 
 ```text
 /
-├── __root.tsx (Layout, Font, Global Header)
-├── index.tsx (Hero, Categories, Highlights)
-├── shop/index.tsx (Product Grid, Filters)
-├── product/$id.tsx (Details, Purchase)
-├── cart.tsx (Shopping Cart)
-├── checkout.tsx (Customer Info, Payment)
+├── __root.tsx (Global Layout)
+├── index.tsx (Home)
+├── shop/index.tsx (Product Grid)
+├── product/$id.tsx (Details)
+├── cart.tsx (Cart)
+├── checkout.tsx (Checkout)
 ├── admin/
+│   ├── route.tsx (Auth Guard)
 │   ├── index.tsx (Dashboard)
 │   ├── products.tsx (Inventory)
-│   ├── orders.tsx (Sales)
-│   └── coupons.tsx (Promotions)
+│   └── ...
 ```
