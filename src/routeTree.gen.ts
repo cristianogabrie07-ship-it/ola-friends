@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminCouponsRouteImport } from './routes/admin/coupons'
 import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
 
@@ -66,6 +67,11 @@ const AdminProductsRoute = AdminProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/admin/coupons': typeof AdminCouponsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/admin/coupons': typeof AdminCouponsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/product/$id': typeof ProductIdRoute
   '/admin': typeof AdminIndexRoute
   '/shop': typeof ShopIndexRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/admin/coupons': typeof AdminCouponsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/product/$id': typeof ProductIdRoute
   '/admin/': typeof AdminIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/admin/coupons'
     | '/admin/orders'
     | '/admin/products'
+    | '/admin/settings'
     | '/product/$id'
     | '/admin/'
     | '/shop/'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/admin/coupons'
     | '/admin/orders'
     | '/admin/products'
+    | '/admin/settings'
     | '/product/$id'
     | '/admin'
     | '/shop'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/admin/coupons'
     | '/admin/orders'
     | '/admin/products'
+    | '/admin/settings'
     | '/product/$id'
     | '/admin/'
     | '/shop/'
@@ -232,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProductsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -253,6 +272,7 @@ interface AdminRouteRouteChildren {
   AdminCouponsRoute: typeof AdminCouponsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminProductsRoute: typeof AdminProductsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -260,6 +280,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminCouponsRoute: AdminCouponsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminProductsRoute: AdminProductsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
