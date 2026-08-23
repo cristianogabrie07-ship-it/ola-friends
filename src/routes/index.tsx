@@ -67,44 +67,41 @@ export default function HomePage() {
       </section>
       
       {/* 
-      # ADICIONAR BOTÃO DE LOGOUT NO ADMIN
+      # CRIAR PÁGINA DE PEDIDOS NO ADMIN
 
-      Falta um botão de Logout explícito na sidebar do admin.
+      A rota /admin/orders está em placeholder. Criar a funcionalidade completa.
 
       Cole este prompt no Lovable:
 
       ---
 
-      Adicionar um botão de Logout na sidebar do painel administrativo. Ler o componente da sidebar (provavelmente em `src/components/admin/Sidebar.tsx` ou similar) e adicionar no final:
+      A rota `/admin/orders` está em placeholder. Criar a página completa de gestão de pedidos.
 
-      ```tsx
-      import { LogOut } from "lucide-react";
-      import { useNavigate } from "@tanstack/react-router";
-      import { supabase } from "@/integrations/supabase/client";
+      ### Criar ou atualizar `src/routes/admin/orders.tsx`:
 
-      // Adicionar dentro da sidebar, antes do fechamento:
-      const navigate = useNavigate();
-      const handleLogout = async () => {
-        await supabase.auth.signOut();
-        navigate({ to: "/auth" });
-      };
+      A página deve ter:
 
-      // Botão no final da sidebar:
-      <button
-        onClick={handleLogout}
-        className="flex items-center gap-3 w-full px-4 py-3 text-[#A0A0A0] hover:text-[#E00000] hover:bg-[#E0000011] rounded-lg transition-all mt-auto"
-      >
-        <LogOut size={18} />
-        <span className="text-sm font-medium">Sair</span>
-      </button>
-      ```
+      1. **Tabela de pedidos** com colunas: ID (curto), Cliente, Data, Total, Status
+      2. **Filtros por status**: Todos, Pendente, Pago, Preparando, Enviado, Entregue, Cancelado
+      3. **Detalhe do pedido** ao clicar (modal ou painel lateral) mostrando:
+         - Dados do cliente (nome, email, telefone, CPF)
+         - Endereço de entrega
+         - Itens do pedido (imagem, nome, quantidade, preço)
+         - Resumo (subtotal, desconto, frete, total)
+         - Método de pagamento
+         - Status atual
+      4. **Alterar status** com botões ou dropdown
+      5. **Skeleton loading** enquanto busca dados
 
-      O botão deve:
-      - Ficar no final da sidebar (usando mt-auto ou flex-grow)
-      - Ícone de logout (LogOut do Lucide)
-      - Texto "Sair"
-      - Hover vermelho sutil
-      - Fazer signOut do Supabase e redirecionar pra /auth
+      Cores: manter paleta preto+dourado (#050505 fundo, #0D0D0D cards, #C9A84C accent)
+
+      Status possíveis com cores:
+      - pendente: amarelo
+      - pago: verde
+      - preparando: azul
+      - enviado: roxo
+      - entregue: verde forte
+      - cancelado: vermelho
       */}
     </div>
   );
