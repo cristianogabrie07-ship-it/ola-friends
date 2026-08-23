@@ -8,9 +8,9 @@ const slides = [
     title: "BEM-VINDO",
     subtitle: "MARTINS MULTIMARCAS",
     store: "STORE",
-    backgroundSize: "80%",
-    backgroundPosition: "right 10% center",
-    opacity: "opacity-80"
+    backgroundSize: "contain",
+    backgroundPosition: "right 5% center",
+    opacity: "opacity-100"
   },
   {
     image: "https://images.unsplash.com/photo-1511746015096-145fcb3d42e8?auto=format&fit=crop&q=80&w=1200",
@@ -50,9 +50,12 @@ export function Hero() {
               backgroundPosition: slide.backgroundPosition || 'center'
             }}
           />
-          <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-transparent" />
-          <div className="relative h-full container mx-auto px-4 flex flex-col justify-center items-start text-white">
-            <h2 className="text-4xl md:text-6xl font-bungee tracking-tighter mb-2 animate-in fade-in slide-in-from-left duration-700 drop-shadow-lg">
+          <div 
+            className="absolute inset-0 z-[1]" 
+            style={{ background: 'linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)' }}
+          />
+          <div className="relative z-[2] h-full container mx-auto px-4 flex flex-col justify-center items-start text-white">
+            <h2 className="text-4xl md:text-6xl font-bungee tracking-tighter mb-2 animate-in fade-in slide-in-from-left duration-700 drop-shadow-2xl">
               {slide.title}
             </h2>
             <h1 className="text-5xl md:text-8xl font-bungee tracking-tighter mb-4 text-primary animate-in fade-in slide-in-from-left duration-1000">
