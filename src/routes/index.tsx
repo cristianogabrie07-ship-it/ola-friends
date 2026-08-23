@@ -62,8 +62,8 @@ export default function HomePage() {
                 <p className="text-[#A0A0A0] italic">Em breve novidades.</p>
               </div>
             )}
-          </div>
         </div>
+      </section>
     </div>
   );
 }
