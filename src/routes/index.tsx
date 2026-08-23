@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Banner from "@/components/Banner";
 import { Categories } from "@/components/home/Categories";
+import { TickerBar } from "@/components/TickerBar";
+import { QuickNav } from "@/components/QuickNav";
+import { Garantias } from "@/components/Garantias";
 import { ProductCard } from "@/components/ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedProducts } from "@/lib/storefront.functions";
@@ -8,18 +11,6 @@ import { getFeaturedProducts } from "@/lib/storefront.functions";
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
-
-function GarantiaCard({ icon, title, desc }: { icon: string; title: string; desc: string }) {
-  return (
-    <div className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-6 flex items-center gap-4 hover:border-[#C9A84C44] transition-all duration-200">
-      <span className="text-3xl text-[#C9A84C]">{icon}</span>
-      <div>
-        <h4 className="text-white font-bold text-sm md:text-base uppercase tracking-wider">{title}</h4>
-        <p className="text-[#A0A0A0] text-xs md:text-sm">{desc}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HomePage() {
   const { data: products, isLoading } = useQuery({
@@ -29,21 +20,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#050505] w-full">
-      {/* Banner — JÁ EXISTE, NÃO MEXER */}
       <Banner />
-      
-      {/* Categorias — JÁ EXISTE, NÃO MEXER */}
+      <TickerBar />
+      <QuickNav />
       <Categories />
-
-      {/* Garantias */}
-      <section className="py-12 px-4 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <GarantiaCard icon="🚚" title="Frete Grátis" desc="Acima de R$ 199" />
-          <GarantiaCard icon="💳" title="PIX -10%" desc="Desconto automático" />
-          <GarantiaCard icon="🔄" title="Troca Fácil" desc="Até 7 dias" />
-        </div>
-      </section>
-
+      <Garantias />
+      
       {/* Produtos em Destaque */}
       <section className="py-12 px-4 max-w-7xl mx-auto">
         <h2 className="text-xl md:text-2xl font-bold uppercase tracking-wider text-[#C9A84C] mb-8">
