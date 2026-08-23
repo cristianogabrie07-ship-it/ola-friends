@@ -67,67 +67,43 @@ export default function HomePage() {
       </section>
       
       {/* 
-      # VERIFICAR PAINEL ADMINISTRATIVO
+      # CRIAR CONFIGURAÇÕES DA LOJA NO ADMIN
+
+      As configurações da loja não possuem interface visual.
 
       Cole este prompt no Lovable:
 
       ---
 
-      Por favor, verificar o painel administrativo da loja. Ler todos os arquivos relacionados ao admin e reportar o que está funcionando e o que está quebrado.
+      Criar a página de configurações da loja em `/admin/settings` ou similar.
 
-      Verificar se existem e estão funcionando:
+      ### Criar `src/routes/admin/settings.tsx`:
 
-      ### 1. Login Admin
-      - Rota de login (`/admin` ou `/login`)
-      - Autenticação com Supabase Auth
-      - Proteção de rotas (redireciona se não logado)
+      Formulário com as seguintes seções:
 
-      ### 2. Dashboard
-      - Rota do dashboard (`/admin/dashboard` ou similar)
-      - Cards de métricas (total de vendas, pedidos, etc)
-      - Gráficos ou resumo visual
+      **1. Dados Gerais:**
+      - Nome da loja (input text)
+      - Slogan (input text)
+      - Logo (upload de imagem)
+      - Banner (upload de imagem)
 
-      ### 3. Gestão de Produtos
-      - Listagem de produtos (tabela com imagem, nome, preço, estoque, status)
-      - Criar novo produto (modal ou página com formulário)
-      - Editar produto
-      - Deletar produto (com confirmação)
-      - Ativar/desativar produto (toggle)
-      - Upload de imagens
+      **2. Contato:**
+      - WhatsApp (input tel)
+      - Email (input email)
+      - Instagram (input text com @)
 
-      ### 4. Gestão de Cupons
-      - Listagem de cupons
-      - Criar cupom (código, tipo % ou fixo, valor, validade)
-      - Editar cupom
-      - Deletar cupom
+      **3. Textos:**
+      - Texto de boas-vindas (textarea)
+      - Política de troca (textarea)
 
-      ### 5. Lista de Pedidos
-      - Listagem de pedidos (tabela com ID, cliente, data, total, status)
-      - Filtrar por status
-      - Detalhe do pedido (modal ou página)
-      - Alterar status do pedido
+      **4. Pagamento:**
+      - Gateway: radio buttons (Asaas, Mercado Pago, Nenhum)
+      - API Key (input password, mascarado)
+      - Sandbox: toggle sim/não
 
-      ### 6. Configurações da Loja
-      - Dados da loja (nome, slogan, logo, banner)
-      - Contato (WhatsApp, email, Instagram)
-      - Configuração de pagamento (gateway)
+      **Botão:** "Salvar Alterações" (bg #C9A84C, text #050505)
 
-      ### 7. Layout e Navegação
-      - Sidebar com menus (Dashboard, Produtos, Cupons, Pedidos, Config)
-      - Header com breadcrumb e perfil do admin
-      - Responsivo (mobile: drawer ao invés de sidebar)
-      - Logout funcional
-
-      ### 8. Segurança
-      - Middleware protegendo rotas admin
-      - Apenas usuários admin podem acessar
-      - RLS (Row Level Security) no Supabase
-
-      ## Reportar:
-      - ✅ O que está funcionando
-      - ❌ O que está quebrado ou faltando
-      - ⚠️ O que precisa de ajuste
-      - Arquivos criados e suas rotas
+      Manter paleta preto+dourado. Fundo #050505, cards #0D0D0D, inputs #1A1A1A com border #C9A84C33.
       */}
     </div>
   );
