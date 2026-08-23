@@ -4,8 +4,8 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  promo_price?: number;
-  images: string[];
+  promo_price?: number | null;
+  images: string[] | null;
 }
 
 export function ProductCard({ product }: { product: Product }) {
