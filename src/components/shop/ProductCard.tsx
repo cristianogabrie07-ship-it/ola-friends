@@ -9,7 +9,7 @@ export interface Product {
   price: number;
   promo_price?: number | null;
   images: string[] | null;
-  is_sold_out?: boolean;
+  is_sold_out?: boolean | null;
 }
 
 export function ProductCard({ product }: { product: Product }) {
