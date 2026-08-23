@@ -9,7 +9,7 @@ const categories = [
 ];
 
 interface CategoriesProps {
-  selectedCategory?: string;
+  selectedCategory?: string | undefined;
   onSelect?: (slug: string) => void;
 }
 
