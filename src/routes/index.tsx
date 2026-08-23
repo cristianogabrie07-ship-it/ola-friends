@@ -64,39 +64,6 @@ export default function HomePage() {
             )}
           </div>
         </div>
-      </section>
-      
-      {/* 
-      # IMPLEMENTAR PENDENCIAS DO ADMIN
-
-      Cole este prompt no Lovable:
-
-      ---
-
-      IMPORTANTE: Implementar as mudanças, não adicionar como comentário.
-
-      Fazer as seguintes 3 coisas AGORA:
-
-      ## 1. Criar página de pedidos
-
-      Criar arquivo `src/routes/admin/orders.tsx` com tabela de pedidos, filtros por status (pendente, pago, preparando, enviado, entregue, cancelado), e possibilidade de alterar status. Buscar dados da tabela `orders` no Supabase. Manter paleta preto+dourado.
-
-      ## 2. Criar página de configurações
-
-      Criar arquivo `src/routes/admin/settings.tsx` com formulário para: nome da loja, slogan, WhatsApp, email, Instagram, política de troca. Botão "Salvar" que grava no Supabase tabela `stores`. Manter paleta preto+dourado.
-
-      ## 3. Adicionar botão de Logout
-
-      No componente da sidebar do admin, adicionar um botão "Sair" no final com ícone de logout que faz `supabase.auth.signOut()` e redireciona para `/login`.
-
-      ## 4. Atualizar index.tsx
-
-      Remover TODOS os comentários que foram adicionados ao final do arquivo `src/routes/index.tsx`. O arquivo deve ter APENAS o código TypeScript/React, sem nenhum comentário de prompt.
-
-      ## 5. Limpar
-
-      Deletar os arquivos de prompt que foram criados: `PROMPT-*.md` se existirem no projeto.
-      */}
     </div>
   );
 }

@@ -23,19 +23,31 @@ export const Route = createFileRoute('/admin')({
 
 function AdminLayout() {
   return (
-    <div className="min-h-screen bg-neutral-100 flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 bg-neutral-900 text-white p-6 space-y-8">
-        <h2 className="text-xl font-bungee tracking-tighter">MARTINS ADMIN</h2>
+    <div className="min-h-screen bg-[#050505] flex flex-col md:flex-row">
+      <aside className="w-full md:w-64 bg-[#0D0D0D] border-r border-[#C9A84C22] text-white p-6 flex flex-col">
+        <h2 className="text-xl font-bungee tracking-tighter text-[#C9A84C] mb-8">MARTINS ADMIN</h2>
         <nav className="flex flex-col gap-4 font-bold uppercase text-sm">
-          <Link to="/admin" className="hover:text-primary transition-colors">Dashboard</Link>
-          <Link to="/admin/products" className="hover:text-primary transition-colors">Produtos</Link>
-          <Link to="/admin/orders" className="hover:text-primary transition-colors">Pedidos</Link>
-          <Link to="/admin/coupons" className="hover:text-primary transition-colors">Cupons</Link>
-          <hr className="border-neutral-800" />
+          <Link to="/admin" className="hover:text-[#C9A84C] transition-colors [&.active]:text-[#C9A84C]">Dashboard</Link>
+          <Link to="/admin/products" className="hover:text-[#C9A84C] transition-colors [&.active]:text-[#C9A84C]">Produtos</Link>
+          <Link to="/admin/orders" className="hover:text-[#C9A84C] transition-colors [&.active]:text-[#C9A84C]">Pedidos</Link>
+          <Link to="/admin/coupons" className="hover:text-[#C9A84C] transition-colors [&.active]:text-[#C9A84C]">Cupons</Link>
+          <Link to="/admin/settings" className="hover:text-[#C9A84C] transition-colors [&.active]:text-[#C9A84C]">Configurações</Link>
+          <hr className="border-[#C9A84C22]" />
           <Link to="/" className="text-xs opacity-60">Voltar para Loja</Link>
         </nav>
+        
+        <button 
+          onClick={async () => { 
+            await supabase.auth.signOut(); 
+            window.location.href = "/auth"; 
+          }}
+          className="flex items-center gap-3 w-full px-4 py-3 text-[#A0A0A0] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all mt-auto"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span className="text-sm font-medium">Sair</span>
+        </button>
       </aside>
-      <main className="flex-1 p-8">
+      <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
     </div>
