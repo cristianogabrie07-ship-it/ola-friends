@@ -65,6 +65,71 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      {/* 
+      # VERIFICAR PAINEL ADMINISTRATIVO
+
+      Cole este prompt no Lovable:
+
+      ---
+
+      Por favor, verificar o painel administrativo da loja. Ler todos os arquivos relacionados ao admin e reportar o que está funcionando e o que está quebrado.
+
+      Verificar se existem e estão funcionando:
+
+      ### 1. Login Admin
+      - Rota de login (`/admin` ou `/login`)
+      - Autenticação com Supabase Auth
+      - Proteção de rotas (redireciona se não logado)
+
+      ### 2. Dashboard
+      - Rota do dashboard (`/admin/dashboard` ou similar)
+      - Cards de métricas (total de vendas, pedidos, etc)
+      - Gráficos ou resumo visual
+
+      ### 3. Gestão de Produtos
+      - Listagem de produtos (tabela com imagem, nome, preço, estoque, status)
+      - Criar novo produto (modal ou página com formulário)
+      - Editar produto
+      - Deletar produto (com confirmação)
+      - Ativar/desativar produto (toggle)
+      - Upload de imagens
+
+      ### 4. Gestão de Cupons
+      - Listagem de cupons
+      - Criar cupom (código, tipo % ou fixo, valor, validade)
+      - Editar cupom
+      - Deletar cupom
+
+      ### 5. Lista de Pedidos
+      - Listagem de pedidos (tabela com ID, cliente, data, total, status)
+      - Filtrar por status
+      - Detalhe do pedido (modal ou página)
+      - Alterar status do pedido
+
+      ### 6. Configurações da Loja
+      - Dados da loja (nome, slogan, logo, banner)
+      - Contato (WhatsApp, email, Instagram)
+      - Configuração de pagamento (gateway)
+
+      ### 7. Layout e Navegação
+      - Sidebar com menus (Dashboard, Produtos, Cupons, Pedidos, Config)
+      - Header com breadcrumb e perfil do admin
+      - Responsivo (mobile: drawer ao invés de sidebar)
+      - Logout funcional
+
+      ### 8. Segurança
+      - Middleware protegendo rotas admin
+      - Apenas usuários admin podem acessar
+      - RLS (Row Level Security) no Supabase
+
+      ## Reportar:
+      - ✅ O que está funcionando
+      - ❌ O que está quebrado ou faltando
+      - ⚠️ O que precisa de ajuste
+      - Arquivos criados e suas rotas
+      */}
     </div>
   );
 }
+
