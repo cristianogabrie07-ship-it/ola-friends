@@ -3,7 +3,7 @@ interface Product {
   name: string;
   price: number;
   promo_price?: number | null;
-  images: string[];
+  images: string[] | null;
   category?: string;
 }
 
