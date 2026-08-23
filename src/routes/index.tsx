@@ -61,11 +61,7 @@ export default function HomePage() {
             {products.map((product) => (
               <ProductCard 
                 key={product.id} 
-                product={{
-                  ...product,
-                  promo_price: product.promo_price ?? undefined,
-                  images: product.images || [],
-                }} 
+                product={product} 
               />
             ))}
           </div>
