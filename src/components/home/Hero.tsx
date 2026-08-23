@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import heroAsset from "@/assets/martins-logo-hero.png.asset.json";
 
 const slides = [
   {
-    image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&q=80&w=1200",
+    image: heroAsset.url,
     title: "BEM-VINDO",
     subtitle: "MARTINS MULTIMARCAS",
-    store: "STORE"
+    store: "STORE",
+    backgroundSize: "120%",
+    opacity: "opacity-100"
   },
   {
     image: "https://images.unsplash.com/photo-1511746015096-145fcb3d42e8?auto=format&fit=crop&q=80&w=1200",
     title: "NOVA COLEÇÃO",
     subtitle: "ESTILO E CONFORTO",
-    store: "CONFIRA"
+    store: "CONFIRA",
+    backgroundSize: "cover",
+    opacity: "opacity-40"
   }
 ];
 
@@ -37,9 +42,15 @@ export function Hero() {
           }`}
         >
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: `url(${slide.image})` }}
+            className={`absolute inset-0 bg-no-repeat bg-center ${slide.opacity}`}
+            style={{ 
+              backgroundImage: `url(${slide.image})`,
+              backgroundSize: slide.backgroundSize || 'cover'
+            }}
           />
+          {slide.image === heroAsset.url && (
+            <div className="absolute inset-0 bg-linear-to-b from-black/60 via-transparent to-black/60" />
+          )}
           <div className="relative h-full container mx-auto px-4 flex flex-col justify-center items-start text-white">
             <h2 className="text-4xl md:text-6xl font-bungee tracking-tighter mb-2 animate-in fade-in slide-in-from-left duration-700">
               {slide.title}
