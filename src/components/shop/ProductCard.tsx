@@ -75,7 +75,7 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
       <button
         onClick={handleAddToCart}
-        disabled={product.is_sold_out}
+        disabled={!!product.is_sold_out}
         className="absolute bottom-20 right-4 bg-primary text-white p-2 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 disabled:opacity-0"
       >
         <ShoppingCart className="w-5 h-5" />
