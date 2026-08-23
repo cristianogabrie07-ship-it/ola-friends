@@ -1,17 +1,26 @@
 import { motion } from "framer-motion";
+import bannerBg from "@/assets/banner-bg.png.asset.json";
 
 export default function Banner() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#050505]">
-      {/* Background com gradiente radial dourado sutil */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#050505] via-[#0a0a0a] to-[#0d0d0d]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,168,76,0.08)_0%,_transparent_70%)]" />
+    <section className="relative w-full overflow-hidden min-h-[300px] md:min-h-[400px] flex items-center">
+      {/* Imagem de fundo */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${bannerBg.url}')` }}
+      />
+      
+      {/* Overlay escuro com gradiente */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-[#050505]/60 to-[#050505]/90" />
+      
+      {/* Overlay lateral escuro para legibilidade */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/90 via-[#050505]/40 to-[#050505]/70" />
 
-      {/* Conteúdo principal */}
-      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+      {/* Conteúdo — MANTER EXATAMENTE COMO ESTÁ */}
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24 w-full">
         <div className="flex flex-col items-center justify-center text-center gap-6 md:gap-8">
           
-          {/* Logo M estilizado */}
+          {/* Logo M */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -73,7 +82,7 @@ export default function Banner() {
             Estilo, atitude e confiança
           </motion.p>
 
-          {/* Linha divisória decorativa */}
+          {/* Linha divisória */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
@@ -88,19 +97,19 @@ export default function Banner() {
             transition={{ duration: 0.6, delay: 0.7 }}
             className="flex flex-wrap justify-center gap-4 md:gap-6 mt-2"
           >
-            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]">
+            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]/80 backdrop-blur-sm">
               <span className="text-lg">🔥</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] tracking-wide">
                 Rua exclusiva com estilo urbano
               </span>
             </div>
-            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]">
+            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]/80 backdrop-blur-sm">
               <span className="text-lg">🏷️</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] tracking-wide">
                 Frete grátis acima de R$ 199
               </span>
             </div>
-            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]">
+            <div className="flex items-center gap-2 border border-[#C9A84C33] rounded-full px-4 py-2 bg-[#0D0D0D]/80 backdrop-blur-sm">
               <span className="text-lg">💳</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] tracking-wide">
                 PIX com 10% de desconto
