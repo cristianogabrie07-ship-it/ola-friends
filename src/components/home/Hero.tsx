@@ -8,8 +8,9 @@ const slides = [
     title: "BEM-VINDO",
     subtitle: "MARTINS MULTIMARCAS",
     store: "STORE",
-    backgroundSize: "120%",
-    opacity: "opacity-100"
+    backgroundSize: "80%",
+    backgroundPosition: "right 10% center",
+    opacity: "opacity-80"
   },
   {
     image: "https://images.unsplash.com/photo-1511746015096-145fcb3d42e8?auto=format&fit=crop&q=80&w=1200",
@@ -42,17 +43,16 @@ export function Hero() {
           }`}
         >
           <div
-            className={`absolute inset-0 bg-no-repeat bg-center ${slide.opacity}`}
+            className={`absolute inset-0 bg-no-repeat ${slide.opacity}`}
             style={{ 
               backgroundImage: `url(${slide.image})`,
-              backgroundSize: slide.backgroundSize || 'cover'
+              backgroundSize: slide.backgroundSize || 'cover',
+              backgroundPosition: slide.backgroundPosition || 'center'
             }}
           />
-          {slide.image === heroAsset.url && (
-            <div className="absolute inset-0 bg-linear-to-b from-black/60 via-transparent to-black/60" />
-          )}
+          <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-transparent" />
           <div className="relative h-full container mx-auto px-4 flex flex-col justify-center items-start text-white">
-            <h2 className="text-4xl md:text-6xl font-bungee tracking-tighter mb-2 animate-in fade-in slide-in-from-left duration-700">
+            <h2 className="text-4xl md:text-6xl font-bungee tracking-tighter mb-2 animate-in fade-in slide-in-from-left duration-700 drop-shadow-lg">
               {slide.title}
             </h2>
             <h1 className="text-5xl md:text-8xl font-bungee tracking-tighter mb-4 text-primary animate-in fade-in slide-in-from-left duration-1000">
