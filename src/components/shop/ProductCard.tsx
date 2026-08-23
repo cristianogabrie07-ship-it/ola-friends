@@ -1,4 +1,4 @@
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Package } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
@@ -7,8 +7,8 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  promo_price?: number;
-  images: string[];
+  promo_price?: number | null;
+  images: string[] | null;
   is_sold_out?: boolean;
 }
 
@@ -24,8 +24,8 @@ export function ProductCard({ product }: { product: Product }) {
       id: product.id,
       name: product.name,
       price: product.price,
-      promo_price: product.promo_price,
-      image: product.images[0],
+      promo_price: product.promo_price || undefined,
+      image: product.images?.[0] || "",
       quantity: 1,
     });
     toast.success("Produto adicionado ao carrinho!");
@@ -38,11 +38,17 @@ export function ProductCard({ product }: { product: Product }) {
       className="group relative bg-white border border-border overflow-hidden"
     >
       <div className="aspect-[4/5] overflow-hidden relative">
-        <img
-          src={product.images[0]}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {product.images?.[0] ? (
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+            <Package className="w-12 h-12 text-neutral-300" />
+          </div>
+        )}
         {product.is_sold_out && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
             <span className="bg-white text-black px-4 py-1 font-bold text-sm uppercase">Esgotado</span>
