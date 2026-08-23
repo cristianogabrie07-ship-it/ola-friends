@@ -8,10 +8,9 @@ export const Route = createFileRoute('/admin/orders')({
 
 interface Order {
   id: string;
-  customer_name: string;
-  customer_email: string;
+  customer_details: any;
   total: number;
-  payment_status: string;
+  status: string;
   created_at: string;
 }
 
@@ -36,19 +35,19 @@ export function AdminOrders() {
   async function fetchOrders() {
     setLoading(true);
     let query = supabase.from("orders").select("*").order("created_at", { ascending: false });
-    if (filter !== "todos") query = query.eq("payment_status", filter);
+    if (filter !== "todos") query = query.eq("status", filter);
     const { data } = await query;
-    setOrders(data || []);
+    setOrders((data as any) || []);
     setLoading(false);
   }
 
   async function updateStatus(id: string, status: string) {
-    await supabase.from("orders").update({ payment_status: status }).eq("id", id);
+    await supabase.from("orders").update({ status: status } as any).eq("id", id);
     fetchOrders();
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] p-6">
+    <div className="min-h-screen bg-[#050505] p-6 text-left">
       <h1 className="text-2xl font-bold text-[#C9A84C] uppercase tracking-wider mb-6">Pedidos</h1>
       <div className="flex gap-2 mb-6 flex-wrap">
         {["todos", "pendente", "pago", "preparando", "enviado", "entregue", "cancelado"].map((s) => (
@@ -65,13 +64,13 @@ export function AdminOrders() {
           {orders.map((order) => (
             <div key={order.id} className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-4 flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-white font-semibold text-sm">{order.customer_name}</p>
-                <p className="text-[#A0A0A0] text-xs">{order.customer_email}</p>
+                <p className="text-white font-semibold text-sm">{order.customer_details?.fullName || "Cliente não identificado"}</p>
+                <p className="text-[#A0A0A0] text-xs">{order.customer_details?.email || "-"}</p>
                 <p className="text-[#A0A0A0] text-xs">{new Date(order.created_at).toLocaleDateString("pt-BR")}</p>
               </div>
               <p className="text-[#C9A84C] font-bold mr-4">R$ {order.total.toFixed(2).replace(".", ",")}</p>
-              <select value={order.payment_status} onChange={(e) => updateStatus(order.id, e.target.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${statusColors[order.payment_status] || "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22]"}`}>
+              <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${statusColors[order.status] || "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22]"}`}>
                 {["pendente", "pago", "preparando", "enviado", "entregue", "cancelado"].map((s) => (
                   <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                 ))}

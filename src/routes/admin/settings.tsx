@@ -18,23 +18,23 @@ export function AdminSettings() {
   useEffect(() => { loadSettings(); }, []);
 
   async function loadSettings() {
-    const { data } = await supabase.from("stores").select("*").limit(1).single();
+    const { data } = await supabase.from("stores" as any).select("*").limit(1).single();
     if (data) {
-      setName(data.name || "");
-      setSlogan(data.slogan || "");
-      setWhatsapp(data.whatsapp || "");
-      setEmail(data.email || "");
-      setInstagram(data.instagram || "");
+      setName((data as any).name || "");
+      setSlogan((data as any).slogan || "");
+      setWhatsapp((data as any).whatsapp || "");
+      setEmail((data as any).email || "");
+      setInstagram((data as any).instagram || "");
     }
   }
 
   async function handleSave() {
     setSaving(true);
-    const { data } = await supabase.from("stores").select("id").limit(1).single();
+    const { data } = await supabase.from("stores" as any).select("id").limit(1).single();
     if (data) {
-      await supabase.from("stores").update({ name, slogan, whatsapp, email, instagram }).eq("id", data.id);
+      await supabase.from("stores" as any).update({ name, slogan, whatsapp, email, instagram }).eq("id", (data as any).id);
     } else {
-      await supabase.from("stores").insert([{ name, slogan, whatsapp, email, instagram }]);
+      await supabase.from("stores" as any).insert([{ name, slogan, whatsapp, email, instagram }]);
     }
     setSaving(false);
     setSaved(true);
@@ -59,7 +59,7 @@ export function AdminSettings() {
           <div><label className="text-[#A0A0A0] text-xs mb-1 block">Instagram</label><input value={instagram} onChange={e => setInstagram(e.target.value)} className={inputClass} /></div>
         </div>
         <button onClick={handleSave} disabled={saving}
-          className="bg-[#C9A84C] text-[#050505] font-bold text-sm uppercase tracking-wider px-8 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-50">
+          className="bg-[#C9A84C] text-[#050505] font-bold text-sm uppercase tracking-wider px-8 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-50 text-left">
           {saving ? "Salvando..." : saved ? "✓ Salvo!" : "Salvar Alterações"}
         </button>
       </div>
