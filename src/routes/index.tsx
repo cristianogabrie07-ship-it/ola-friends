@@ -67,43 +67,44 @@ export default function HomePage() {
       </section>
       
       {/* 
-      # CRIAR CONFIGURAÇÕES DA LOJA NO ADMIN
+      # ADICIONAR BOTÃO DE LOGOUT NO ADMIN
 
-      As configurações da loja não possuem interface visual.
+      Falta um botão de Logout explícito na sidebar do admin.
 
       Cole este prompt no Lovable:
 
       ---
 
-      Criar a página de configurações da loja em `/admin/settings` ou similar.
+      Adicionar um botão de Logout na sidebar do painel administrativo. Ler o componente da sidebar (provavelmente em `src/components/admin/Sidebar.tsx` ou similar) e adicionar no final:
 
-      ### Criar `src/routes/admin/settings.tsx`:
+      ```tsx
+      import { LogOut } from "lucide-react";
+      import { useNavigate } from "@tanstack/react-router";
+      import { supabase } from "@/integrations/supabase/client";
 
-      Formulário com as seguintes seções:
+      // Adicionar dentro da sidebar, antes do fechamento:
+      const navigate = useNavigate();
+      const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate({ to: "/auth" });
+      };
 
-      **1. Dados Gerais:**
-      - Nome da loja (input text)
-      - Slogan (input text)
-      - Logo (upload de imagem)
-      - Banner (upload de imagem)
+      // Botão no final da sidebar:
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-3 w-full px-4 py-3 text-[#A0A0A0] hover:text-[#E00000] hover:bg-[#E0000011] rounded-lg transition-all mt-auto"
+      >
+        <LogOut size={18} />
+        <span className="text-sm font-medium">Sair</span>
+      </button>
+      ```
 
-      **2. Contato:**
-      - WhatsApp (input tel)
-      - Email (input email)
-      - Instagram (input text com @)
-
-      **3. Textos:**
-      - Texto de boas-vindas (textarea)
-      - Política de troca (textarea)
-
-      **4. Pagamento:**
-      - Gateway: radio buttons (Asaas, Mercado Pago, Nenhum)
-      - API Key (input password, mascarado)
-      - Sandbox: toggle sim/não
-
-      **Botão:** "Salvar Alterações" (bg #C9A84C, text #050505)
-
-      Manter paleta preto+dourado. Fundo #050505, cards #0D0D0D, inputs #1A1A1A com border #C9A84C33.
+      O botão deve:
+      - Ficar no final da sidebar (usando mt-auto ou flex-grow)
+      - Ícone de logout (LogOut do Lucide)
+      - Texto "Sair"
+      - Hover vermelho sutil
+      - Fazer signOut do Supabase e redirecionar pra /auth
       */}
     </div>
   );
