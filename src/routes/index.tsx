@@ -67,41 +67,35 @@ export default function HomePage() {
       </section>
       
       {/* 
-      # CRIAR PÁGINA DE PEDIDOS NO ADMIN
-
-      A rota /admin/orders está em placeholder. Criar a funcionalidade completa.
+      # IMPLEMENTAR PENDENCIAS DO ADMIN
 
       Cole este prompt no Lovable:
 
       ---
 
-      A rota `/admin/orders` está em placeholder. Criar a página completa de gestão de pedidos.
+      IMPORTANTE: Implementar as mudanças, não adicionar como comentário.
 
-      ### Criar ou atualizar `src/routes/admin/orders.tsx`:
+      Fazer as seguintes 3 coisas AGORA:
 
-      A página deve ter:
+      ## 1. Criar página de pedidos
 
-      1. **Tabela de pedidos** com colunas: ID (curto), Cliente, Data, Total, Status
-      2. **Filtros por status**: Todos, Pendente, Pago, Preparando, Enviado, Entregue, Cancelado
-      3. **Detalhe do pedido** ao clicar (modal ou painel lateral) mostrando:
-         - Dados do cliente (nome, email, telefone, CPF)
-         - Endereço de entrega
-         - Itens do pedido (imagem, nome, quantidade, preço)
-         - Resumo (subtotal, desconto, frete, total)
-         - Método de pagamento
-         - Status atual
-      4. **Alterar status** com botões ou dropdown
-      5. **Skeleton loading** enquanto busca dados
+      Criar arquivo `src/routes/admin/orders.tsx` com tabela de pedidos, filtros por status (pendente, pago, preparando, enviado, entregue, cancelado), e possibilidade de alterar status. Buscar dados da tabela `orders` no Supabase. Manter paleta preto+dourado.
 
-      Cores: manter paleta preto+dourado (#050505 fundo, #0D0D0D cards, #C9A84C accent)
+      ## 2. Criar página de configurações
 
-      Status possíveis com cores:
-      - pendente: amarelo
-      - pago: verde
-      - preparando: azul
-      - enviado: roxo
-      - entregue: verde forte
-      - cancelado: vermelho
+      Criar arquivo `src/routes/admin/settings.tsx` com formulário para: nome da loja, slogan, WhatsApp, email, Instagram, política de troca. Botão "Salvar" que grava no Supabase tabela `stores`. Manter paleta preto+dourado.
+
+      ## 3. Adicionar botão de Logout
+
+      No componente da sidebar do admin, adicionar um botão "Sair" no final com ícone de logout que faz `supabase.auth.signOut()` e redireciona para `/login`.
+
+      ## 4. Atualizar index.tsx
+
+      Remover TODOS os comentários que foram adicionados ao final do arquivo `src/routes/index.tsx`. O arquivo deve ter APENAS o código TypeScript/React, sem nenhum comentário de prompt.
+
+      ## 5. Limpar
+
+      Deletar os arquivos de prompt que foram criados: `PROMPT-*.md` se existirem no projeto.
       */}
     </div>
   );
