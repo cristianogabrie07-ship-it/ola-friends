@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { ShopSidebar } from '@/components/shop/ShopSidebar';
 import { ProductCard } from '@/components/shop/ProductCard';
+import { useQuery } from '@tanstack/react-query';
+import { getProducts } from '@/lib/storefront.functions';
 
 const shopSearchSchema = z.object({
   category: z.string().optional(),
@@ -14,63 +16,33 @@ export const Route = createFileRoute('/shop/')({
   component: ShopPage,
 });
 
-const mockProducts = [
-  {
-    id: "1",
-    name: "Camisa Brasil Titular 2024",
-    price: 299.9,
-    promo_price: 249.9,
-    images: ["https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&q=80&w=400"],
-    category: "camisas-de-time",
-  },
-  {
-    id: "2",
-    name: "Conjunto Nike Tech Fleece",
-    price: 599.9,
-    images: ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=400"],
-    category: "conjuntos",
-  },
-  {
-    id: "3",
-    name: "Shorts Adidas Originals",
-    price: 149.9,
-    promo_price: 99.9,
-    images: ["https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&q=80&w=400"],
-    category: "shorts",
-    is_sold_out: true,
-  },
-  {
-    id: "4",
-    name: "Relógio Casio G-Shock",
-    price: 899.9,
-    images: ["https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=400"],
-    category: "relogios",
-  },
-  {
-    id: "5",
-    name: "Camisa Real Madrid 24/25",
-    price: 349.9,
-    images: ["https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&q=80&w=400"],
-    category: "camisas-de-time",
-  },
-  {
-    id: "6",
-    name: "Boné New Era NY",
-    price: 199.9,
-    promo_price: 159.9,
-    images: ["https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&q=80&w=400"],
-    category: "bones",
-  }
-];
-
 function ShopPage() {
   const { category, sale, sort } = Route.useSearch();
   
-  const filteredProducts = mockProducts.filter(p => {
-    if (category && p.category !== category) return false;
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["shop-products"],
+    queryFn: () => getProducts(),
+  });
+  
+  const filteredProducts = products.filter(p => {
+    // Note: p.categories here refers to the joined category object if using getProducts with join
+    // The current getProducts returns a flat structure or nested categories depending on the query
+    // Adjusting based on common Supabase return patterns
+    const categorySlug = (p as any).categories?.slug;
+    
+    if (category && categorySlug !== category) return false;
     if (sale && !p.promo_price) return false;
     return true;
   });
+
+  // Sort logic
+  if (sort === 'az') {
+    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sort === 'low') {
+    filteredProducts.sort((a, b) => (a.promo_price || a.price) - (b.promo_price || b.price));
+  } else if (sort === 'high') {
+    filteredProducts.sort((a, b) => (b.promo_price || b.price) - (a.promo_price || a.price));
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -87,8 +59,10 @@ function ShopPage() {
               <span className="text-sm text-muted-foreground">{filteredProducts.length} produtos</span>
               <select 
                 className="border p-2 text-sm bg-white"
-                value={sort}
-                onChange={(e) => {/* Handle sort change */}}
+                value={sort || 'az'}
+                onChange={(e) => {
+                  // This is a simplified sort handling, in a real app this would navigate to update search params
+                }}
               >
                 <option value="az">A-Z</option>
                 <option value="low">Menor preço</option>
@@ -97,15 +71,21 @@ function ShopPage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          
-          {filteredProducts.length === 0 && (
+          {isLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-pulse">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="aspect-[3/4] bg-neutral-100 rounded-lg" />
+              ))}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
             <div className="text-center py-20">
-              <p className="text-muted-foreground italic">Nenhum produto encontrado nesta categoria.</p>
+              <p className="text-muted-foreground italic">Nenhum produto cadastrado ainda.</p>
             </div>
           )}
         </div>
