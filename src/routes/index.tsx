@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Hero } from "@/components/home/Hero";
 import Banner from "@/components/Banner.tsx";
 import { Categories } from "@/components/home/Categories";
 import { ProductCard } from "@/components/shop/ProductCard";
