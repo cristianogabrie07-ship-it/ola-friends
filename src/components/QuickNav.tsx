@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Shirt, Pants, Watch, ShoppingBag, Gem, Footprints } from "lucide-react";
+import { Shirt, Watch, ShoppingBag, Gem, Footprints } from "lucide-react";
 
 const navItems = [
   { name: "Camisas", icon: Shirt },
-  { name: "Calças", icon: Pants },
+  { name: "Calças", icon: Footprints },
   { name: "Moletom", icon: Gem },
   { name: "Jaqueta", icon: ShoppingBag },
   { name: "Bonés", icon: Watch },
