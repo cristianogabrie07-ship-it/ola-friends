@@ -157,6 +157,39 @@ export type Database = {
           },
         ]
       }
+      stores: {
+        Row: {
+          created_at: string
+          email: string | null
+          exchange_policy: string | null
+          id: string
+          instagram: string | null
+          name: string
+          slogan: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          exchange_policy?: string | null
+          id?: string
+          instagram?: string | null
+          name: string
+          slogan?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          exchange_policy?: string | null
+          id?: string
+          instagram?: string | null
+          name?: string
+          slogan?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
