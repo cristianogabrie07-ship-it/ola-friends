@@ -206,7 +206,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
             )}
 
             <div className="space-y-3">
-              <FormLabel className="uppercase font-bold text-xs">Tamanhos Disponíveis</FormLabel>
+              <p className="uppercase font-bold text-xs">Tamanhos Disponíveis</p>
               <div className="flex flex-wrap gap-4">
                 {AVAILABLE_SIZES.map((size) => (
                   <FormField
