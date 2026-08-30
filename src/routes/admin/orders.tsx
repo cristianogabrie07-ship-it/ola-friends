@@ -48,11 +48,11 @@ export function AdminOrders() {
 
   return (
     <div className="min-h-screen bg-[#050505] p-6 text-left">
-      <h1 className="text-2xl font-bold text-[#C9A84C] uppercase tracking-wider mb-6">Pedidos</h1>
+      <h1 className="text-2xl font-bold text-[#E00000] uppercase tracking-wider mb-6">Pedidos</h1>
       <div className="flex gap-2 mb-6 flex-wrap">
         {["todos", "pendente", "pago", "preparando", "enviado", "entregue", "cancelado"].map((s) => (
           <button key={s} onClick={() => setFilter(s)}
-            className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all ${filter === s ? "bg-[#C9A84C] text-[#050505] border-[#C9A84C]" : "bg-[#0D0D0D] text-[#A0A0A0] border-[#C9A84C22] hover:border-[#C9A84C55]"}`}>
+            className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all ${filter === s ? "bg-[#E00000] text-[#050505] border-[#E00000]" : "bg-[#0D0D0D] text-[#A0A0A0] border-[#E0000022] hover:border-[#E0000055]"}`}>
             {s.charAt(0).toUpperCase() + s.slice(1)}
           </button>
         ))}
@@ -62,15 +62,15 @@ export function AdminOrders() {
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
-            <div key={order.id} className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-4 flex items-center justify-between">
+            <div key={order.id} className="bg-[#0D0D0D] border border-[#E0000022] rounded-xl p-4 flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-white font-semibold text-sm">{order.customer_details?.fullName || "Cliente não identificado"}</p>
                 <p className="text-[#A0A0A0] text-xs">{order.customer_details?.email || "-"}</p>
                 <p className="text-[#A0A0A0] text-xs">{new Date(order.created_at).toLocaleDateString("pt-BR")}</p>
               </div>
-              <p className="text-[#C9A84C] font-bold mr-4">R$ {order.total.toFixed(2).replace(".", ",")}</p>
+              <p className="text-[#E00000] font-bold mr-4">R$ {order.total.toFixed(2).replace(".", ",")}</p>
               <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${statusColors[order.status] || "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22]"}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${statusColors[order.status] || "bg-[#1A1A1A] text-[#A0A0A0] border-[#E0000022]"}`}>
                 {["pendente", "pago", "preparando", "enviado", "entregue", "cancelado"].map((s) => (
                   <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                 ))}

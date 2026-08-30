@@ -10,7 +10,7 @@ export function TickerBar() {
   const repeatedItems = [...items, ...items, ...items];
   
   return (
-    <div className="w-full bg-[#C9A84C] overflow-hidden py-2">
+    <div className="w-full bg-[#E00000] overflow-hidden py-2">
       <div className="flex animate-[ticker_20s_linear_infinite] whitespace-nowrap">
         {repeatedItems.map((item, i) => (
           <span key={i} className="flex items-center mx-6 text-[#050505] font-bold text-xs md:text-sm uppercase tracking-wider">

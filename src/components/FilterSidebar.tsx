@@ -40,8 +40,8 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             <button key={size} onClick={() => toggleSize(size)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                 selectedSizes.includes(size)
-                  ? "bg-[#C9A84C] text-[#050505] border-[#C9A84C]"
-                  : "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22] hover:border-[#C9A84C55]"
+                  ? "bg-[#E00000] text-[#050505] border-[#E00000]"
+                  : "bg-[#1A1A1A] text-[#A0A0A0] border-[#E0000022] hover:border-[#E0000055]"
               }`}>
               {size}
             </button>
@@ -55,8 +55,8 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             <button key={range.label} onClick={() => selectPrice(range)}
               className={`text-left px-3 py-2 rounded-lg text-xs border transition-all ${
                 selectedPrice?.min === range.min
-                  ? "bg-[#C9A84C] text-[#050505] border-[#C9A84C]"
-                  : "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22] hover:border-[#C9A84C55]"
+                  ? "bg-[#E00000] text-[#050505] border-[#E00000]"
+                  : "bg-[#1A1A1A] text-[#A0A0A0] border-[#E0000022] hover:border-[#E0000055]"
               }`}>
               {range.label}
             </button>
@@ -69,7 +69,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   return (
     <>
       <button onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-20 right-4 z-40 bg-[#C9A84C] text-[#050505] p-3 rounded-full shadow-lg">
+        className="lg:hidden fixed bottom-20 right-4 z-40 bg-[#E00000] text-[#050505] p-3 rounded-full shadow-lg">
         <SlidersHorizontal size={20} />
       </button>
       <AnimatePresence>
@@ -79,9 +79,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
               className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setIsOpen(false)} />
             <motion.div initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }}
               transition={{ type: "spring", damping: 25 }}
-              className="fixed left-0 top-0 bottom-0 w-72 bg-[#0D0D0D] border-r border-[#C9A84C22] z-50 p-6 overflow-y-auto lg:hidden">
+              className="fixed left-0 top-0 bottom-0 w-72 bg-[#0D0D0D] border-r border-[#E0000022] z-50 p-6 overflow-y-auto lg:hidden">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-[#C9A84C] font-bold uppercase">Filtros</h2>
+                <h2 className="text-[#E00000] font-bold uppercase">Filtros</h2>
                 <button onClick={() => setIsOpen(false)} className="text-[#A0A0A0]"><X size={20} /></button>
               </div>
               <FilterContent />
@@ -90,8 +90,8 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
         )}
       </AnimatePresence>
       <aside className="hidden lg:block w-64 shrink-0">
-        <div className="sticky top-24 bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-5">
-          <h2 className="text-[#C9A84C] font-bold uppercase text-sm mb-5 flex items-center gap-2">
+        <div className="sticky top-24 bg-[#0D0D0D] border border-[#E0000022] rounded-xl p-5">
+          <h2 className="text-[#E00000] font-bold uppercase text-sm mb-5 flex items-center gap-2">
             <SlidersHorizontal size={16} /> Filtros
           </h2>
           <FilterContent />

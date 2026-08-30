@@ -11,7 +11,7 @@ interface Product {
 export function ProductCard({ product }: { product: Product }) {
   return (
     <motion.div whileHover={{ scale: 1.02 }}
-      className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl overflow-hidden hover:border-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.1)] transition-all duration-200 group">
+      className="bg-[#0D0D0D] border border-[#E0000022] rounded-xl overflow-hidden hover:border-[#E00000] hover:shadow-[0_0_20px_rgba(224,0,0,0.1)] transition-all duration-200 group">
       <div className="aspect-[3/4] overflow-hidden bg-[#1A1A1A]">
         {product.images?.[0] ? (
           <img src={product.images[0]} alt={product.name}
@@ -23,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="p-3 flex flex-col gap-2">
         <h3 className="text-white font-semibold text-sm truncate">{product.name}</h3>
         <div className="flex items-center gap-2">
-          <span className="text-[#C9A84C] font-bold text-base">
+          <span className="text-[#E00000] font-bold text-base">
             R$ {(product.promo_price || product.price).toFixed(2).replace(".", ",")}
           </span>
           {product.promo_price && (
@@ -32,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </div>
-        <button className="w-full bg-[#C9A84C] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all">
+        <button className="w-full bg-[#E00000] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all">
           Comprar
         </button>
       </div>

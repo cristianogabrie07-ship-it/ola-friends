@@ -37,7 +37,7 @@ export default function HomePage() {
           <FilterSidebar onFilterChange={setFilters} />
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold uppercase tracking-wider text-[#C9A84C]">
+              <h2 className="text-lg font-bold uppercase tracking-wider text-[#E00000]">
                 {selectedCategory || "Todos os Produtos"}
               </h2>
             </div>
@@ -45,7 +45,7 @@ export default function HomePage() {
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 animate-pulse">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="aspect-[3/4] bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl" />
+                  <div key={i} className="aspect-[3/4] bg-[#0D0D0D] border border-[#E0000022] rounded-xl" />
                 ))}
               </div>
             ) : products && products.length > 0 ? (
