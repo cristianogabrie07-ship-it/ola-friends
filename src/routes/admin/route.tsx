@@ -1,25 +1,63 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect, useNavigate } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin')({
-  beforeLoad: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw redirect({ to: '/auth' });
-    }
-
-    const { data: hasRole } = await supabase.rpc('has_role', {
-      _user_id: session.user.id,
-      _role: 'admin'
-    });
-
-    if (!hasRole) {
-      toast.error("Acesso negado: Somente administradores.");
-      throw redirect({ to: '/' });
-    }
-  },
-  component: AdminLayout,
+  component: AdminRouteGuard,
 });
+
+function AdminRouteGuard() {
+  const [checking, setChecking] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error("Faça login para acessar o admin.");
+          navigate({ to: '/auth' });
+          return;
+        }
+
+        const { data: hasRole } = await supabase.rpc('has_role', {
+          _user_id: session.user.id,
+          _role: 'admin'
+        });
+
+        if (!hasRole) {
+          toast.error("Acesso negado: Somente administradores.");
+          navigate({ to: '/' });
+          return;
+        }
+
+        setAuthorized(true);
+      } catch (err) {
+        toast.error("Erro ao verificar autenticação.");
+        navigate({ to: '/auth' });
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <div className="text-[#C9A84C] text-lg font-bold animate-pulse">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!authorized) return null;
+
+  return <AdminLayout />;
+}
 
 function AdminLayout() {
   return (
@@ -53,6 +91,3 @@ function AdminLayout() {
     </div>
   );
 }
-
-import { Link } from '@tanstack/react-router';
-import { toast } from 'sonner';
