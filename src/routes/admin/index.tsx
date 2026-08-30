@@ -24,17 +24,17 @@ function AdminDashboard() {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold uppercase">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 border border-border shadow-sm">
-          <p className="text-sm text-muted-foreground uppercase font-bold mb-2">Total de Vendas</p>
-          <p className="text-4xl font-bold text-primary">R$ {stats?.totalSales.toFixed(2)}</p>
+        <div className="bg-[#0D0D0D] p-6 border border-[#C9A84C22] rounded-xl">
+          <p className="text-sm text-[#A0A0A0] uppercase font-bold mb-2">Total de Vendas</p>
+          <p className="text-4xl font-bold text-[#C9A84C]">R$ {stats?.totalSales.toFixed(2)}</p>
         </div>
-        <div className="bg-white p-6 border border-border shadow-sm">
-          <p className="text-sm text-muted-foreground uppercase font-bold mb-2">Pedidos Realizados</p>
-          <p className="text-4xl font-bold">{stats?.totalOrders}</p>
+        <div className="bg-[#0D0D0D] p-6 border border-[#C9A84C22] rounded-xl">
+          <p className="text-sm text-[#A0A0A0] uppercase font-bold mb-2">Pedidos Realizados</p>
+          <p className="text-4xl font-bold text-white">{stats?.totalOrders}</p>
         </div>
       </div>
       
-      <div className="bg-white p-6 border border-border shadow-sm">
+      <div className="bg-[#0D0D0D] p-6 border border-[#C9A84C22] rounded-xl">
         <h2 className="font-bold uppercase mb-4">Ações Rápidas</h2>
         <div className="flex gap-4">
           <Link to="/admin/products" className="bg-primary text-primary-foreground px-4 py-2 font-bold uppercase text-xs">Gerenciar Produtos</Link>

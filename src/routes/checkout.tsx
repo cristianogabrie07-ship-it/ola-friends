@@ -3,6 +3,7 @@ import { useCart } from '@/hooks/use-cart';
 import { useState } from 'react';
 import { Check, QrCode, Phone, ArrowLeft, Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const Route = createFileRoute('/checkout')({
   component: CheckoutPage,
@@ -20,6 +21,35 @@ function CheckoutPage() {
     state: '',
     zip: ''
   });
+
+  const saveOrder = async (paymentMethod: string) => {
+    const { error } = await supabase.from('orders').insert({
+      customer_details: {
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
+      },
+      items: items.map(i => ({
+        id: i.id,
+        name: i.name,
+        price: i.price,
+        promo_price: i.promo_price,
+        size: i.size,
+        quantity: i.quantity,
+      })),
+      total,
+      payment_method: paymentMethod,
+      status: 'pendente',
+    });
+    if (error) {
+      console.error('Erro ao salvar pedido:', error);
+      toast.error('Erro ao registrar pedido. Tente novamente.');
+    }
+  };
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +73,14 @@ function CheckoutPage() {
   if (step === 'success') {
     return (
       <div className="container mx-auto px-4 py-20 text-center space-y-6">
-        <div className="bg-green-100 text-green-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto">
+        <div className="bg-green-900/30 text-green-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto">
           <Check className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold uppercase">Pedido Recebido!</h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <h1 className="text-3xl font-bold uppercase text-white">Pedido Recebido!</h1>
+        <p className="text-[#A0A0A0] max-w-md mx-auto">
           Obrigado pela sua compra. Assim que o pagamento for confirmado, iniciaremos o processo de envio.
         </p>
-        <Link to="/" className="inline-block bg-primary text-white px-8 py-3 font-bold uppercase hover:opacity-90">
+        <Link to="/" className="inline-block bg-[#C9A84C] text-[#050505] px-8 py-3 font-bold uppercase hover:brightness-110">
           Voltar para o Início
         </Link>
       </div>
@@ -65,12 +95,12 @@ function CheckoutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {step === 'info' ? (
             <form onSubmit={handleNextStep} className="space-y-4">
-              <h2 className="font-bold uppercase text-lg border-b pb-2 mb-4">Dados de Entrega</h2>
+              <h2 className="font-bold uppercase text-lg border-b border-[#C9A84C22] pb-2 mb-4 text-white">Dados de Entrega</h2>
               <input
                 required
                 type="text"
                 placeholder="Nome Completo"
-                className="w-full border p-3 rounded"
+                className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                 value={formData.name}
                 onChange={e => setFormData({...formData, name: e.target.value})}
               />
@@ -79,7 +109,7 @@ function CheckoutPage() {
                   required
                   type="email"
                   placeholder="Email"
-                  className="w-full border p-3 rounded"
+                  className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
                 />
@@ -87,7 +117,7 @@ function CheckoutPage() {
                   required
                   type="tel"
                   placeholder="WhatsApp"
-                  className="w-full border p-3 rounded"
+                  className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                   value={formData.phone}
                   onChange={e => setFormData({...formData, phone: e.target.value})}
                 />
@@ -96,7 +126,7 @@ function CheckoutPage() {
                 required
                 type="text"
                 placeholder="Endereço Completo"
-                className="w-full border p-3 rounded"
+                className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                 value={formData.address}
                 onChange={e => setFormData({...formData, address: e.target.value})}
               />
@@ -105,7 +135,7 @@ function CheckoutPage() {
                   required
                   type="text"
                   placeholder="Cidade"
-                  className="w-full border p-3 rounded"
+                  className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                   value={formData.city}
                   onChange={e => setFormData({...formData, city: e.target.value})}
                 />
@@ -113,7 +143,7 @@ function CheckoutPage() {
                   required
                   type="text"
                   placeholder="Estado"
-                  className="w-full border p-3 rounded"
+                  className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                   value={formData.state}
                   onChange={e => setFormData({...formData, state: e.target.value})}
                 />
@@ -121,12 +151,12 @@ function CheckoutPage() {
                   required
                   type="text"
                   placeholder="CEP"
-                  className="w-full border p-3 rounded"
+                  className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
                   value={formData.zip}
                   onChange={e => setFormData({...formData, zip: e.target.value})}
                 />
               </div>
-              <button type="submit" className="w-full bg-primary text-white py-4 font-bold uppercase hover:opacity-90">
+              <button type="submit" className="w-full bg-[#C9A84C] text-[#050505] py-4 font-bold uppercase hover:brightness-110 rounded-lg">
                 Ir para o Pagamento
               </button>
             </form>
@@ -135,8 +165,8 @@ function CheckoutPage() {
               <button onClick={() => setStep('info')} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
                 <ArrowLeft className="w-4 h-4" /> Voltar para dados
               </button>
-              <h2 className="font-bold uppercase text-lg border-b pb-2">Pagamento via PIX</h2>
-              <div className="bg-neutral-50 p-6 rounded-lg text-center space-y-4 border-2 border-primary/20">
+              <h2 className="font-bold uppercase text-lg border-b border-[#C9A84C22] pb-2 text-white">Pagamento via PIX</h2>
+              <div className="bg-[#0D0D0D] p-6 rounded-lg text-center space-y-4 border-2 border-[#C9A84C22]">
                 <QrCode className="w-48 h-48 mx-auto" />
                 <div className="space-y-2">
                   <p className="text-sm font-bold uppercase text-primary">Escaneie o QR Code acima</p>
@@ -149,7 +179,8 @@ function CheckoutPage() {
                   </button>
                 </div>
                 <button 
-                  onClick={() => {
+                  onClick={async () => {
+                    await saveOrder('pix');
                     clearCart();
                     setStep('success');
                   }}
@@ -159,11 +190,16 @@ function CheckoutPage() {
                 </button>
               </div>
               <div className="relative text-center">
-                <span className="bg-white px-2 text-xs uppercase text-muted-foreground relative z-10">ou</span>
+                <span className="bg-[#050505] px-2 text-xs uppercase text-[#A0A0A0] relative z-10">ou</span>
                 <hr className="absolute top-1/2 w-full border-t border-border -z-0" />
               </div>
               <button
-                onClick={handleFinishWithWhatsApp}
+                onClick={async () => {
+                  await saveOrder('whatsapp');
+                  handleFinishWithWhatsApp();
+                  clearCart();
+                  setStep('success');
+                }}
                 className="w-full bg-[#25D366] text-white py-4 font-bold uppercase flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
               >
                 <Phone className="w-5 h-5" /> Finalizar via WhatsApp
@@ -171,8 +207,8 @@ function CheckoutPage() {
             </div>
           )}
 
-          <div className="bg-neutral-50 p-6 rounded-lg h-fit">
-            <h2 className="font-bold uppercase text-lg border-b pb-2 mb-4">Seu Pedido</h2>
+          <div className="bg-[#0D0D0D] p-6 rounded-lg h-fit border border-[#C9A84C22]">
+            <h2 className="font-bold uppercase text-lg border-b border-[#C9A84C22] pb-2 mb-4 text-white">Seu Pedido</h2>
             <div className="space-y-4 mb-6">
               {items.map(item => (
                 <div key={item.id} className="flex justify-between text-sm">

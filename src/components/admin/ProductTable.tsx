@@ -32,9 +32,9 @@ export function ProductTable({
   const [tempStock, setTempStock] = useState<string>("");
 
   return (
-    <div className="bg-white border border-border shadow-sm">
+    <div className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl overflow-hidden">
       <Table>
-        <TableHeader className="bg-neutral-50">
+        <TableHeader className="bg-[#1A1A1A]">
           <TableRow>
             <TableHead className="uppercase font-bold text-[10px] w-[80px]">Foto</TableHead>
             <TableHead className="uppercase font-bold text-[10px]">Nome</TableHead>
