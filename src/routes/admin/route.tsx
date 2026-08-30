@@ -14,36 +14,70 @@ function AdminRouteGuard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          toast.error("Faça login para acessar o admin.");
-          navigate({ to: '/auth' });
+    let cancelled = false;
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY = 500;
+
+    const checkAuth = async (session: any) => {
+      if (cancelled) return;
+
+      if (!session) {
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          setTimeout(() => tryGetSession(), RETRY_DELAY);
           return;
         }
+        toast.error("Faça login para acessar o admin.");
+        navigate({ to: '/auth' });
+        setChecking(false);
+        return;
+      }
 
+      try {
         const { data: hasRole } = await supabase.rpc('has_role', {
           _user_id: session.user.id,
           _role: 'admin'
         });
 
+        if (cancelled) return;
+
         if (!hasRole) {
           toast.error("Acesso negado: Somente administradores.");
           navigate({ to: '/' });
-          return;
+        } else {
+          setAuthorized(true);
         }
-
-        setAuthorized(true);
       } catch (err) {
-        toast.error("Erro ao verificar autenticação.");
-        navigate({ to: '/auth' });
+        if (!cancelled) {
+          toast.error("Erro ao verificar autenticação.");
+          navigate({ to: '/auth' });
+        }
       } finally {
-        setChecking(false);
+        if (!cancelled) setChecking(false);
       }
     };
 
-    checkAuth();
+    const tryGetSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      checkAuth(session);
+    };
+
+    // Also listen for auth state changes as a backup
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          checkAuth(session);
+        }
+      }
+    );
+
+    tryGetSession();
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   if (checking) {
