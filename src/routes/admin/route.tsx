@@ -1,7 +1,6 @@
-import { createFileRoute, Outlet, redirect, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect, useNavigate, Link } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
-import { Link } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin')({
@@ -17,17 +16,44 @@ function AdminRouteGuard() {
     let cancelled = false;
 
     const checkAuth = async () => {
-      // Try multiple times with increasing delays for Lovable preview
-      for (let attempt = 0; attempt < 8 && !cancelled; attempt++) {
+      // Wait for session to be available (Lovable preview brokered storage is async)
+      for (let attempt = 0; attempt < 10 && !cancelled; attempt++) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
-            const { data: hasRole } = await supabase.rpc('has_role', {
-              _user_id: session.user.id,
-              _role: 'admin'
-            });
+            // Try has_role RPC first
+            let isAdmin = false;
+            try {
+              const { data } = await supabase.rpc('has_role', {
+                _user_id: session.user.id,
+                _role: 'admin'
+              });
+              isAdmin = !!data;
+            } catch {
+              // RPC failed, fall through to table query
+            }
+
+            // Fallback: query user_roles directly
+            if (!isAdmin) {
+              try {
+                const { data: roles } = await supabase
+                  .from('user_roles')
+                  .select('role')
+                  .eq('user_id', session.user.id);
+                isAdmin = !!roles && roles.some((r: any) => r.role === 'admin');
+              } catch {
+                // Table query also failed
+              }
+            }
+
+            // Final fallback: check hardcoded admin emails
+            if (!isAdmin) {
+              const adminEmails = ['admin@martins.com', 'cristianogabrie07@gmail.com'];
+              isAdmin = adminEmails.includes(session.user.email || '');
+            }
+
             if (!cancelled) {
-              if (hasRole) {
+              if (isAdmin) {
                 setAuthorized(true);
               } else {
                 toast.error("Acesso negado: Somente administradores.");
@@ -40,8 +66,7 @@ function AdminRouteGuard() {
         } catch (err) {
           // ignore, retry
         }
-        // Wait increasing time: 300ms, 600ms, 900ms...
-        await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+        await new Promise(r => setTimeout(r, 400));
       }
       if (!cancelled) {
         toast.error("Faça login para acessar o admin.");
@@ -51,14 +76,13 @@ function AdminRouteGuard() {
     };
 
     checkAuth();
-
     return () => { cancelled = true; };
   }, [navigate]);
 
   if (checking) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="text-[#C9A84C] text-lg font-bold animate-pulse">Carregando...</div>
+        <div className="text-[#C9A84C] text-lg font-bold animate-pulse">Verificando acesso...</div>
       </div>
     );
   }
@@ -86,7 +110,7 @@ function AdminLayout() {
         <button 
           onClick={async () => { 
             await supabase.auth.signOut(); 
-            window.location.href = "/auth"; 
+            window.location.href = "/"; 
           }}
           className="flex items-center gap-3 w-full px-4 py-3 text-[#A0A0A0] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all mt-auto"
         >
