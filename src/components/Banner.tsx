@@ -34,7 +34,7 @@ export default function Banner() {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="w-12 h-px bg-[#E00000]"
+            className="w-12 h-px bg-[#C9A84C]"
           />
 
           {/* Selos — scroll horizontal no mobile */}
@@ -44,15 +44,15 @@ export default function Banner() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex gap-3 overflow-x-auto max-w-full pb-1 px-2 md:px-0 md:flex-wrap md:justify-center no-scrollbar"
           >
-            <div className="flex items-center gap-2 border border-[#E0000044] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
+            <div className="flex items-center gap-2 border border-[#C9A84C44] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
               <span className="text-base">🔥</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] whitespace-nowrap">Rua exclusiva com estilo urbano</span>
             </div>
-            <div className="flex items-center gap-2 border border-[#E0000044] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
+            <div className="flex items-center gap-2 border border-[#C9A84C44] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
               <span className="text-base">🏷️</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] whitespace-nowrap">Frete grátis acima de R$ 199</span>
             </div>
-            <div className="flex items-center gap-2 border border-[#E0000044] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
+            <div className="flex items-center gap-2 border border-[#C9A84C44] rounded-full px-4 py-2 bg-[#050505]/70 backdrop-blur-sm shrink-0">
               <span className="text-base">💳</span>
               <span className="text-xs md:text-sm text-[#A0A0A0] whitespace-nowrap">PIX com 10% de desconto</span>
             </div>
@@ -66,7 +66,7 @@ export default function Banner() {
             transition={{ duration: 0.6, delay: 0.8 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
-            className="mt-2 inline-flex items-center bg-[#E00000] text-[#050505] font-bold text-sm uppercase tracking-widest px-8 py-3 rounded-lg hover:brightness-110 transition-all duration-200"
+            className="mt-2 inline-flex items-center bg-[#C9A84C] text-[#050505] font-bold text-sm uppercase tracking-widest px-8 py-3 rounded-lg hover:brightness-110 transition-all duration-200"
           >
             Ver Produtos
           </motion.a>
