@@ -43,28 +43,28 @@ function AuthPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-20">
-      <div className="max-w-md mx-auto bg-white p-8 border border-border">
-        <h1 className="text-2xl font-bold uppercase mb-8 text-center">
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-[#0D0D0D] p-8 border border-[#C9A84C22] rounded-xl">
+        <h1 className="text-2xl font-bold uppercase mb-8 text-center text-[#C9A84C]">
           {isLogin ? 'Login' : 'Cadastro'}
         </h1>
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase mb-1">Email</label>
+            <label className="block text-xs font-bold uppercase mb-1 text-[#A0A0A0]">Email</label>
             <input
               required
               type="email"
-              className="w-full border p-3 rounded"
+              className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase mb-1">Senha</label>
+            <label className="block text-xs font-bold uppercase mb-1 text-[#A0A0A0]">Senha</label>
             <input
               required
               type="password"
-              className="w-full border p-3 rounded"
+              className="w-full bg-[#1A1A1A] border border-[#C9A84C22] text-white p-3 rounded-lg focus:border-[#C9A84C] focus:outline-none"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
@@ -72,7 +72,7 @@ function AuthPage() {
           <button
             disabled={loading}
             type="submit"
-            className="w-full bg-primary text-white py-4 font-bold uppercase hover:opacity-90 disabled:opacity-50"
+            className="w-full bg-[#C9A84C] text-[#050505] py-4 font-bold uppercase hover:brightness-110 disabled:opacity-50 rounded-lg"
           >
             {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Cadastrar'}
           </button>
@@ -80,7 +80,7 @@ function AuthPage() {
         <div className="mt-6 text-center">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-muted-foreground hover:underline"
+            className="text-sm text-[#A0A0A0] hover:text-[#C9A84C] transition-colors"
           >
             {isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login'}
           </button>
