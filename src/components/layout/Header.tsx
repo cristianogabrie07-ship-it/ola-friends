@@ -10,8 +10,8 @@ export function Header() {
   return (
     <header className="w-full bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
       {/* Line 1 */}
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <Link to="/" className="text-2xl font-bungee tracking-tighter flex-shrink-0">
+      <div className="container mx-auto px-3 md:px-4 py-2.5 md:py-3 flex items-center justify-between gap-2 md:gap-4">
+        <Link to="/" className="text-base md:text-2xl font-bungee tracking-tighter flex-shrink-0 truncate">
           MARTINS MULTIMARCAS
         </Link>
 
@@ -24,12 +24,12 @@ export function Header() {
           <Search className="absolute right-3 top-2.5 text-muted-foreground w-5 h-5" />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
           <Link to="/auth" className="hover:opacity-80">
-            <User className="w-6 h-6" />
+            <User className="w-5 h-5 md:w-6 md:h-6" />
           </Link>
           <Link to="/cart" className="relative hover:opacity-80">
-            <ShoppingCart className="w-6 h-6" />
+            <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
             {itemsCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {itemsCount}
@@ -40,7 +40,7 @@ export function Header() {
             className="md:hidden hover:opacity-80"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>

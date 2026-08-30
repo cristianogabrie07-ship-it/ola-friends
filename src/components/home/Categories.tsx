@@ -18,7 +18,7 @@ export function Categories({ selectedCategory, onSelect }: CategoriesProps) {
     <section className="w-full py-8 bg-[#050505]">
       <div className="mx-auto max-w-7xl px-4">
         <h2 className="text-lg font-bold uppercase tracking-wider text-[#C9A84C] mb-6">Categorias</h2>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = selectedCategory === cat.slug;

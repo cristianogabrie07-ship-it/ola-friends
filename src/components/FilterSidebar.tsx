@@ -69,7 +69,7 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
   return (
     <>
       <button onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-20 right-4 z-40 bg-[#C9A84C] text-[#050505] p-3 rounded-full shadow-lg">
+        className="lg:hidden fixed bottom-24 right-5 z-40 bg-[#C9A84C] text-[#050505] p-3 rounded-full shadow-lg">
         <SlidersHorizontal size={20} />
       </button>
       <AnimatePresence>
