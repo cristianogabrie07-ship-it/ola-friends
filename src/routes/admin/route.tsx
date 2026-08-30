@@ -15,69 +15,44 @@ function AdminRouteGuard() {
 
   useEffect(() => {
     let cancelled = false;
-    let retryCount = 0;
-    const MAX_RETRIES = 5;
-    const RETRY_DELAY = 500;
 
-    const checkAuth = async (session: any) => {
-      if (cancelled) return;
-
-      if (!session) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++;
-          setTimeout(() => tryGetSession(), RETRY_DELAY);
-          return;
+    const checkAuth = async () => {
+      // Try multiple times with increasing delays for Lovable preview
+      for (let attempt = 0; attempt < 8 && !cancelled; attempt++) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            const { data: hasRole } = await supabase.rpc('has_role', {
+              _user_id: session.user.id,
+              _role: 'admin'
+            });
+            if (!cancelled) {
+              if (hasRole) {
+                setAuthorized(true);
+              } else {
+                toast.error("Acesso negado: Somente administradores.");
+                navigate({ to: '/' });
+              }
+              setChecking(false);
+            }
+            return;
+          }
+        } catch (err) {
+          // ignore, retry
         }
+        // Wait increasing time: 300ms, 600ms, 900ms...
+        await new Promise(r => setTimeout(r, 300 * (attempt + 1)));
+      }
+      if (!cancelled) {
         toast.error("Faça login para acessar o admin.");
         navigate({ to: '/auth' });
         setChecking(false);
-        return;
-      }
-
-      try {
-        const { data: hasRole } = await supabase.rpc('has_role', {
-          _user_id: session.user.id,
-          _role: 'admin'
-        });
-
-        if (cancelled) return;
-
-        if (!hasRole) {
-          toast.error("Acesso negado: Somente administradores.");
-          navigate({ to: '/' });
-        } else {
-          setAuthorized(true);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          toast.error("Erro ao verificar autenticação.");
-          navigate({ to: '/auth' });
-        }
-      } finally {
-        if (!cancelled) setChecking(false);
       }
     };
 
-    const tryGetSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      checkAuth(session);
-    };
+    checkAuth();
 
-    // Also listen for auth state changes as a backup
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          checkAuth(session);
-        }
-      }
-    );
-
-    tryGetSession();
-
-    return () => {
-      cancelled = true;
-      subscription.unsubscribe();
-    };
+    return () => { cancelled = true; };
   }, [navigate]);
 
   if (checking) {

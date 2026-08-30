@@ -1,29 +1,11 @@
-import { useState, useEffect } from "react";
-import { Search, ShoppingCart, User, Menu, X, Phone } from "lucide-react";
+import { useState } from "react";
+import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useCart } from "@/hooks/use-cart";
-import { supabase } from "@/integrations/supabase/client";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { itemsCount } = useCart();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsLoggedIn(true);
-        const { data: hasRole } = await supabase.rpc('has_role', {
-          _user_id: session.user.id,
-          _role: 'admin'
-        });
-        setIsAdmin(!!hasRole);
-      }
-    };
-    checkAuth();
-  }, []);
 
   return (
     <header className="w-full bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
@@ -43,7 +25,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
-          <Link to={isLoggedIn ? (isAdmin ? "/admin" : "/") : "/auth"} className="hover:opacity-80">
+          <Link to="/admin" className="hover:opacity-80">
             <User className="w-5 h-5 md:w-6 md:h-6" />
           </Link>
           <Link to="/cart" className="relative hover:opacity-80">
