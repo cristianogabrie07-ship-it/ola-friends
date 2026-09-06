@@ -75,14 +75,23 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="text-[#666] text-[11px] mt-0.5">12x de R$ {installments.toFixed(2).replace(".", ",")}</p>
         </div>
       </Link>
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-3 flex items-center gap-2">
         <button
           onClick={handleAddToCart}
           disabled={!!product.is_sold_out}
-          className="w-full bg-[#C9A84C] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 bg-[#C9A84C] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <ShoppingCart className="w-3.5 h-3.5" />
           Comprar
+        </button>
+        <button
+          onClick={handleAddToCart}
+          disabled={!!product.is_sold_out}
+          title="Adicionar ao carrinho"
+          aria-label="Adicionar ao carrinho"
+          className="w-10 h-10 flex-shrink-0 border border-[#C9A84C44] text-[#C9A84C] rounded-lg flex items-center justify-center hover:bg-[#C9A84C] hover:text-[#050505] transition-all disabled:opacity-40"
+        >
+          <ShoppingCart className="w-4 h-4" />
         </button>
       </div>
     </div>

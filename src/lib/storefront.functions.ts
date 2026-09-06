@@ -16,7 +16,7 @@ export const getFeaturedProducts = createServerFn({ method: "GET" })
   .handler(async () => {
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(name)")
+      .select("*, categories(id, name, slug)")
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(8);
@@ -29,7 +29,7 @@ export const getProducts = createServerFn({ method: "GET" })
   .handler(async () => {
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(name)")
+      .select("*, categories(id, name, slug)")
       .eq("is_active", true)
       .order("created_at", { ascending: false });
     

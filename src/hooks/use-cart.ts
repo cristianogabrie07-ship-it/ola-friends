@@ -72,6 +72,9 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: 'martins-multimarcas-cart',
+      // Salvar apenas os items — evita que os getters (total/itemsCount) sejam
+      // sobrescritos por valores antigos ao hidratar do localStorage
+      partialize: (state) => ({ items: state.items }),
     }
   )
-);
+);

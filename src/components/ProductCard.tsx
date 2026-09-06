@@ -1,4 +1,7 @@
 import { motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/hooks/use-cart";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -6,9 +9,26 @@ interface Product {
   price: number;
   promo_price?: number | null;
   images: string[] | null;
+  sizes?: string[] | null;
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      promo_price: product.promo_price || undefined,
+      image: product.images?.[0] || "",
+      quantity: 1,
+    });
+    toast.success("Produto adicionado ao carrinho!");
+  };
+
   return (
     <motion.div whileHover={{ scale: 1.02 }}
       className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl overflow-hidden hover:border-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.1)] transition-all duration-200 group">
@@ -32,10 +52,24 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </div>
-        <button className="w-full bg-[#C9A84C] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all">
-          Comprar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleAddToCart}
+            className="flex-1 bg-[#C9A84C] text-[#050505] font-bold text-xs rounded-lg py-2.5 hover:brightness-110 transition-all flex items-center justify-center gap-2"
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+            Comprar
+          </button>
+          <button
+            onClick={handleAddToCart}
+            title="Adicionar ao carrinho"
+            aria-label="Adicionar ao carrinho"
+            className="w-10 h-10 flex-shrink-0 border border-[#C9A84C44] text-[#C9A84C] rounded-lg flex items-center justify-center hover:bg-[#C9A84C] hover:text-[#050505] transition-all"
+          >
+            <ShoppingCart className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </motion.div>
   );
-}
+}
