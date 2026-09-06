@@ -237,15 +237,21 @@ function CheckoutPage() {
                 </div>
               ))}
             </div>
-            <div className="border-t pt-4 space-y-2">
+            <div className="border-t pt-4 space-y-3">
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
                 <span className="text-[#C9A84C]">R$ {total.toFixed(2)}</span>
               </div>
               {pixDiscount > 0 && (
-                <div className="flex justify-between text-sm font-bold text-[#22C55E]">
-                  <span>Com PIX ({pixDiscount}% OFF)</span>
-                  <span>R$ {totalWithPix.toFixed(2)}</span>
+                <div className="bg-green-500/10 border border-[#22C55E]/30 rounded-lg p-3 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">💳</span>
+                    <div>
+                      <p className="text-[#22C55E] font-bold text-sm">PIX com {pixDiscount}% OFF</p>
+                      <p className="text-[#A0A0A0] text-xs">Economize R$ {(total - totalWithPix).toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <span className="text-[#22C55E] font-bold text-lg">R$ {totalWithPix.toFixed(2)}</span>
                 </div>
               )}
             </div>

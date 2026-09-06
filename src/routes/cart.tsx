@@ -94,9 +94,10 @@ function CartPage() {
                 <span className="text-[#C9A84C] text-xl">R$ {total.toFixed(2)}</span>
               </div>
               {pixDiscount > 0 && (
-                <div className="text-sm bg-[#1A1A1A] border border-[#C9A84C22] rounded-lg p-3 text-center">
-                  <span className="text-[#22C55E] font-bold">PIX com {pixDiscount}% OFF:</span>{" "}
-                  <span className="text-white font-bold">R$ {(total * (1 - pixDiscount / 100)).toFixed(2)}</span>
+                <div className="bg-green-500/10 border border-[#22C55E]/30 rounded-lg p-3 text-center">
+                  <p className="text-[#22C55E] font-bold text-sm">💳 PIX com {pixDiscount}% OFF</p>
+                  <p className="text-white font-bold text-lg mt-1">R$ {(total * (1 - pixDiscount / 100)).toFixed(2)}</p>
+                  <p className="text-[#A0A0A0] text-xs mt-1">no checkout via WhatsApp</p>
                 </div>
               )}
               

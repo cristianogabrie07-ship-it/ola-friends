@@ -38,6 +38,7 @@ function AdminDashboard() {
         <h2 className="font-bold uppercase mb-4">Ações Rápidas</h2>
         <div className="flex gap-4">
           <Link to="/admin/products" className="bg-primary text-primary-foreground px-4 py-2 font-bold uppercase text-xs">Gerenciar Produtos</Link>
+          <Link to="/admin/orders" className="border border-primary text-primary px-4 py-2 font-bold uppercase text-xs">Ver Pedidos</Link>
           <Link to="/admin/coupons" className="border border-primary text-primary px-4 py-2 font-bold uppercase text-xs">Gerenciar Cupons</Link>
         </div>
 
