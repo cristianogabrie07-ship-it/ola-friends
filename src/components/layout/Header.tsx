@@ -41,7 +41,7 @@ export function Header() {
             <img
               src="/images/logo-martins.png"
               alt="Martins Multimarcas"
-              className="h-10 md:h-14 w-auto object-contain"
+              className="h-10 md:h-14 w-auto object-contain mix-blend-screen"
             />
           </Link>
 
