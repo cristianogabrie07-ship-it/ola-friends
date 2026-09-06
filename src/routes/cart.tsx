@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useCart } from '@/hooks/use-cart';
+import { useCart, getCartTotal } from '@/hooks/use-cart';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
 
 export const Route = createFileRoute('/cart')({
@@ -7,7 +8,10 @@ export const Route = createFileRoute('/cart')({
 });
 
 function CartPage() {
-  const { items, removeItem, updateQuantity, total } = useCart();
+  const { items, removeItem, updateQuantity } = useCart();
+  const total = getCartTotal(items);
+  const { settings } = useStoreSettings();
+  const pixDiscount = settings?.pix_discount_percent ?? 10;
 
   if (items.length === 0) {
     return (
@@ -84,15 +88,17 @@ function CartPage() {
                   <span>Subtotal</span>
                   <span className="text-white">R$ {total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-[#A0A0A0]">
-                  <span>Frete</span>
-                  <span className="text-[#22C55E] font-bold uppercase text-[10px] mt-1">Grátis</span>
-                </div>
               </div>
               <div className="border-t border-[#C9A84C22] pt-4 flex justify-between font-bold text-lg">
                 <span className="text-white">Total</span>
                 <span className="text-[#C9A84C] text-xl">R$ {total.toFixed(2)}</span>
               </div>
+              {pixDiscount > 0 && (
+                <div className="text-sm bg-[#1A1A1A] border border-[#C9A84C22] rounded-lg p-3 text-center">
+                  <span className="text-[#22C55E] font-bold">PIX com {pixDiscount}% OFF:</span>{" "}
+                  <span className="text-white font-bold">R$ {(total * (1 - pixDiscount / 100)).toFixed(2)}</span>
+                </div>
+              )}
               
               <div className="space-y-4">
                 <Link

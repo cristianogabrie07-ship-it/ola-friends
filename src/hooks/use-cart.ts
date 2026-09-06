@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface CartItem {
+export interface CartItem {
   id: string;
   name: string;
   price: number;
@@ -17,8 +17,20 @@ interface CartStore {
   removeItem: (id: string, size?: string) => void;
   updateQuantity: (id: string, size: string | undefined, quantity: number) => void;
   clearCart: () => void;
-  itemsCount: number;
-  total: number;
+}
+
+// Helpers puros — calculam sempre em cima dos items atuais.
+// (Não usar getters no store: o merge do persist no zustand converte
+// getters em propriedades fixas e o total ficava travado em 0.)
+export function getCartTotal(items: CartItem[]): number {
+  return items.reduce(
+    (acc, item) => acc + (item.promo_price || item.price) * item.quantity,
+    0
+  );
+}
+
+export function getCartCount(items: CartItem[]): number {
+  return items.reduce((acc, item) => acc + item.quantity, 0);
 }
 
 export const useCart = create<CartStore>()(
@@ -60,22 +72,10 @@ export const useCart = create<CartStore>()(
         });
       },
       clearCart: () => set({ items: [] }),
-      get itemsCount() {
-        return get().items.reduce((acc: number, item: CartItem) => acc + item.quantity, 0);
-      },
-      get total() {
-        return get().items.reduce(
-          (acc: number, item: CartItem) => acc + (item.promo_price || item.price) * item.quantity,
-          0
-        );
-      },
     }),
     {
-      // v2: forçar carrinho limpo (o localStorage antigo tinha total: 0 gravado,
-      // o que sobrescrevia os getters na hidratação)
+      // Salvar apenas os items — evita qualquer valor antigo sobrescrever cálculos
       name: 'martins-multimarcas-cart-v2',
-      // Salvar apenas os items — evita que os getters (total/itemsCount) sejam
-      // sobrescritos por valores antigos ao hidratar do localStorage
       partialize: (state) => ({ items: state.items }),
     }
   )

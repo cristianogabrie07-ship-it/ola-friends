@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useCart } from '@/hooks/use-cart';
+import { useCart, getCartTotal } from '@/hooks/use-cart';
+import { useStoreSettings } from '@/hooks/use-store-settings';
 import { useState } from 'react';
 import { Check, Phone, ArrowLeft, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,7 +14,12 @@ export const Route = createFileRoute('/checkout')({
 });
 
 function CheckoutPage() {
-  const { total, items, clearCart } = useCart();
+  const { items, clearCart } = useCart();
+  const total = getCartTotal(items);
+  const { settings } = useStoreSettings();
+  const pixDiscount = settings?.pix_discount_percent ?? 10;
+  const totalWithPix = total * (1 - pixDiscount / 100);
+  const storeWhatsapp = settings?.whatsapp?.replace(/\D/g, "") || STORE_WHATSAPP;
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
   const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,10 +70,13 @@ function CheckoutPage() {
     setSending(true);
 
     const itemsText = items.map(i => `- ${i.name}${i.size ? ` (Tamanho ${i.size})` : ''} x${i.quantity} = R$ ${((i.promo_price || i.price) * i.quantity).toFixed(2)}`).join('\n');
+    const pixLine = pixDiscount > 0
+      ? `\n*Total com PIX (${pixDiscount}% OFF): R$ ${totalWithPix.toFixed(2)}*`
+      : '';
     const message = encodeURIComponent(
-      `Olá! Gostaria de finalizar um pedido na Martins Multimarcas 🛍️\n\n*Dados do Cliente:*\nNome: ${formData.name}\nWhatsApp: ${formData.phone}\nEmail: ${formData.email}\n\n*Endereço de Entrega:*\n${formData.address}\n${formData.city} - ${formData.state}, CEP: ${formData.zip}\n\n*Itens do Pedido:*\n${itemsText}\n\n*Total: R$ ${total.toFixed(2)}*\n\nQuais são as formas de pagamento disponíveis?`
+      `Olá! Gostaria de finalizar um pedido na Martins Multimarcas 🛍️\n\n*Dados do Cliente:*\nNome: ${formData.name}\nWhatsApp: ${formData.phone}\nEmail: ${formData.email}\n\n*Endereço de Entrega:*\n${formData.address}\n${formData.city} - ${formData.state}, CEP: ${formData.zip}\n\n*Itens do Pedido:*\n${itemsText}\n\n*Total: R$ ${total.toFixed(2)}*${pixLine}\n\nQuais são as formas de pagamento disponíveis?`
     );
-    const url = `https://wa.me/${STORE_WHATSAPP}?text=${message}`;
+    const url = `https://wa.me/${storeWhatsapp}?text=${message}`;
 
     // Abrir o WhatsApp PRIMEIRO (antes de qualquer await) pra não ser
     // bloqueado pelo popup blocker do navegador mobile
@@ -95,7 +104,7 @@ function CheckoutPage() {
           Seu pedido foi registrado e o WhatsApp abriu com os detalhes. Finalize a conversa com a loja para combinar a forma de pagamento (PIX, crédito/débito ou espécie).
         </p>
         <a
-          href={`https://wa.me/${STORE_WHATSAPP}`}
+          href={`https://wa.me/${storeWhatsapp}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-[#25D366] text-white px-8 py-3 font-bold uppercase hover:opacity-90 rounded-lg"
@@ -228,9 +237,17 @@ function CheckoutPage() {
                 </div>
               ))}
             </div>
-            <div className="border-t pt-4 flex justify-between font-bold text-lg">
-              <span>Total</span>
-              <span className="text-[#C9A84C]">R$ {total.toFixed(2)}</span>
+            <div className="border-t pt-4 space-y-2">
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span className="text-[#C9A84C]">R$ {total.toFixed(2)}</span>
+              </div>
+              {pixDiscount > 0 && (
+                <div className="flex justify-between text-sm font-bold text-[#22C55E]">
+                  <span>Com PIX ({pixDiscount}% OFF)</span>
+                  <span>R$ {totalWithPix.toFixed(2)}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Search, ShoppingCart, User, Menu, X, ChevronDown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useCart } from "@/hooks/use-cart";
+import { useCart, getCartCount } from "@/hooks/use-cart";
 import { getStorefrontCategories } from "@/lib/storefront.functions";
 
 export function Header() {
@@ -11,7 +11,8 @@ export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const { itemsCount } = useCart();
+  const { items } = useCart();
+  const itemsCount = getCartCount(items);
   const { data: categories = [] } = useQuery({
     queryKey: ["header-categories"],
     queryFn: () => getStorefrontCategories(),

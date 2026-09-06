@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 export default function Banner() {
+  const { settings } = useStoreSettings();
+  const pixDiscount = settings?.pix_discount_percent ?? 10;
   return (
     <section className="relative w-full overflow-hidden min-h-[380px] md:min-h-[440px] flex items-center justify-center">
       {/* Fundo gerado: gradiente radial dourado + textura de grade sutil, sem depender de foto */}
@@ -76,14 +79,12 @@ export default function Banner() {
               <span className="text-sm md:text-base">🔥</span>
               <span className="text-[10px] md:text-sm text-[#A0A0A0]">Estilo urbano</span>
             </div>
-            <div className="flex items-center gap-1.5 md:gap-2 border border-[#C9A84C44] rounded-full px-3 md:px-4 py-1.5 md:py-2 bg-[#050505]/70 backdrop-blur-sm">
-              <span className="text-sm md:text-base">🏷️</span>
-              <span className="text-[10px] md:text-sm text-[#A0A0A0]">Frete grátis acima de R$199</span>
-            </div>
-            <div className="flex items-center gap-1.5 md:gap-2 border border-[#C9A84C44] rounded-full px-3 md:px-4 py-1.5 md:py-2 bg-[#050505]/70 backdrop-blur-sm">
-              <span className="text-sm md:text-base">💳</span>
-              <span className="text-[10px] md:text-sm text-[#A0A0A0]">PIX com 10% OFF</span>
-            </div>
+            {pixDiscount > 0 && (
+              <div className="flex items-center gap-1.5 md:gap-2 border border-[#C9A84C44] rounded-full px-3 md:px-4 py-1.5 md:py-2 bg-[#050505]/70 backdrop-blur-sm">
+                <span className="text-sm md:text-base">💳</span>
+                <span className="text-[10px] md:text-sm text-[#A0A0A0]">PIX com {pixDiscount}% OFF</span>
+              </div>
+            )}
           </motion.div>
 
           {/* Botão CTA */}

@@ -12,6 +12,7 @@ export function AdminSettings() {
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [instagram, setInstagram] = useState("");
+  const [pixDiscount, setPixDiscount] = useState("10");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -25,6 +26,7 @@ export function AdminSettings() {
       setWhatsapp((data as any).whatsapp || "");
       setEmail((data as any).email || "");
       setInstagram((data as any).instagram || "");
+      setPixDiscount(String((data as any).pix_discount_percent ?? 10));
     }
   }
 
@@ -32,9 +34,10 @@ export function AdminSettings() {
     setSaving(true);
     const { data } = await supabase.from("stores" as any).select("id").limit(1).single();
     if (data) {
-      await supabase.from("stores" as any).update({ name, slogan, whatsapp, email, instagram }).eq("id", (data as any).id);
+      const payload = { name, slogan, whatsapp, email, instagram, pix_discount_percent: Number(pixDiscount) || 0 };
+      await supabase.from("stores" as any).update(payload).eq("id", (data as any).id);
     } else {
-      await supabase.from("stores" as any).insert([{ name, slogan, whatsapp, email, instagram }]);
+      await supabase.from("stores" as any).insert([{ name, slogan, whatsapp, email, instagram, pix_discount_percent: Number(pixDiscount) || 0 }]);
     }
     setSaving(false);
     setSaved(true);
@@ -51,6 +54,22 @@ export function AdminSettings() {
           <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Dados Gerais</h2>
           <div><label className="text-[#A0A0A0] text-xs mb-1 block">Nome da Loja</label><input value={name} onChange={e => setName(e.target.value)} className={inputClass} /></div>
           <div><label className="text-[#A0A0A0] text-xs mb-1 block">Slogan</label><input value={slogan} onChange={e => setSlogan(e.target.value)} className={inputClass} /></div>
+        </div>
+        <div className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-6 space-y-4">
+          <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Pagamentos</h2>
+          <div>
+            <label className="text-[#A0A0A0] text-xs mb-1 block">Desconto PIX (%)</label>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={pixDiscount}
+              onChange={e => setPixDiscount(e.target.value)}
+              className={inputClass}
+              placeholder="Ex: 10 = 10% de desconto no PIX"
+            />
+            <p className="text-[#666] text-xs mt-1">Aplicado automaticamente no checkout e na mensagem do WhatsApp. Coloque 0 para desativar.</p>
+          </div>
         </div>
         <div className="bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl p-6 space-y-4">
           <h2 className="text-white font-semibold text-sm uppercase tracking-wider">Contato</h2>
