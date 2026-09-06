@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import Banner from "@/components/Banner";
+import { TickerBar } from "@/components/TickerBar";
 import { Categories } from "@/components/home/Categories";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { ProductCard } from "@/components/ProductCard";
@@ -26,6 +27,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#050505]">
       <Banner />
+      <TickerBar />
       <Categories
         selectedCategory={selectedCategory}
         onSelect={(slug) => setSelectedCategory(slug === selectedCategory ? undefined : slug)}
@@ -56,8 +58,12 @@ export default function HomePage() {
                 ))}
               </div>
             ) : (
-              <div className="py-20 text-center">
-                <p className="text-[#A0A0A0] italic">Em breve novidades.</p>
+              <div className="py-16 md:py-24 text-center border border-dashed border-[#C9A84C33] rounded-2xl">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full border border-[#C9A84C44] flex items-center justify-center text-[#C9A84C] text-xl">
+                  🛍️
+                </div>
+                <p className="text-[#D9D9D9] font-semibold">Novidades chegando em breve</p>
+                <p className="text-[#A0A0A0] text-sm mt-1">Estamos preparando a coleção. Volte em instantes.</p>
               </div>
             )}
           </div>

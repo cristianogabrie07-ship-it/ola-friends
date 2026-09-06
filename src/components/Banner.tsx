@@ -1,24 +1,52 @@
 import { motion } from "framer-motion";
-import bannerBg from "@/assets/banner-bg.png.asset.json";
 
 export default function Banner() {
   return (
-    <section className="relative w-full overflow-hidden min-h-[350px] md:min-h-[400px] flex items-center justify-center">
-      {/* Imagem de fundo */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${bannerBg.url}')` }}
+    <section className="relative w-full overflow-hidden min-h-[380px] md:min-h-[440px] flex items-center justify-center">
+      {/* Fundo gerado: gradiente radial dourado + textura de grade sutil, sem depender de foto */}
+      <div className="absolute inset-0 bg-[#050505]" />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.22), transparent 70%)",
+        }}
       />
-      
-      {/* Overlay escuro — mais forte nas laterais */}
-      <div className="absolute inset-0 bg-[#050505]/75" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/80 via-transparent to-[#050505]/80" />
+      <div
+        className="absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#C9A84C 1px, transparent 1px), linear-gradient(90deg, #C9A84C 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+      <div
+        className="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl opacity-20"
+        style={{ background: "radial-gradient(circle, #C9A84C, transparent 70%)" }}
+      />
+      <div
+        className="absolute -bottom-40 -left-24 w-96 h-96 rounded-full blur-3xl opacity-10"
+        style={{ background: "radial-gradient(circle, #C9A84C, transparent 70%)" }}
+      />
+
+      {/* Vinheta pra dar profundidade nas bordas */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505]" />
 
       {/* Conteúdo */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6 py-10 md:py-24 w-full">
         <div className="flex flex-col items-center justify-center text-center gap-4 md:gap-6">
-          
+
+          {/* Título de impacto */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-bungee text-3xl sm:text-4xl md:text-6xl text-white leading-tight tracking-tight"
+          >
+            MARTINS <span className="text-[#C9A84C]">MULTIMARCAS</span>
+          </motion.h1>
+
           {/* Tagline */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}

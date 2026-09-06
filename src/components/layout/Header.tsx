@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, ChevronDown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useCart } from "@/hooks/use-cart";
+import { getStorefrontCategories } from "@/lib/storefront.functions";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const { itemsCount } = useCart();
+  const { data: categories = [] } = useQuery({
+    queryKey: ["header-categories"],
+    queryFn: () => getStorefrontCategories(),
+  });
 
   return (
     <header className="w-full bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
@@ -46,10 +53,39 @@ export function Header() {
       </div>
 
       {/* Line 2 */}
-      <nav className="hidden md:block border-t border-primary-foreground/20">
+      <nav className="hidden md:block border-t border-primary-foreground/20 relative">
         <div className="container mx-auto px-4 py-2 flex items-center justify-center gap-8 font-bold text-sm uppercase">
+          <div
+            className="relative"
+            onMouseEnter={() => setIsMegaMenuOpen(true)}
+            onMouseLeave={() => setIsMegaMenuOpen(false)}
+          >
+            <button className="flex items-center gap-1 hover:underline">
+              Categorias <ChevronDown className="w-4 h-4" />
+            </button>
+            {isMegaMenuOpen && (
+              <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 z-50 w-[560px]">
+                <div className="bg-[#0D0D0D] border border-[#C9A84C33] rounded-xl shadow-xl p-6 grid grid-cols-3 gap-4 normal-case">
+                  {categories.length > 0 ? (
+                    categories.map((cat) => (
+                      <Link
+                        key={cat.slug}
+                        to="/shop"
+                        search={{ category: cat.slug }}
+                        className="text-[#D9D9D9] text-sm font-medium hover:text-[#C9A84C] transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-[#666] text-sm col-span-3">Nenhuma categoria cadastrada ainda.</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
           <Link to="/" className="hover:underline">Início</Link>
-          <Link to="/shop" className="hover:underline">Categorias</Link>
+          <Link to="/shop" className="hover:underline">Produtos</Link>
           <Link to="/shop" search={{ sale: true }} className="hover:underline text-red-100">Liquidação</Link>
         </div>
       </nav>
