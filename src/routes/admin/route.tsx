@@ -48,7 +48,7 @@ function AdminRouteGuard() {
 
             // Final fallback: check hardcoded admin emails
             if (!isAdmin) {
-              const adminEmails = ['admin@martins.com', 'cristianogabrie07@gmail.com'];
+              const adminEmails = ['admin@martins.com', 'admin2@martins.com', 'cristianogabrie07@gmail.com'];
               isAdmin = adminEmails.includes(session.user.email || '');
             }
 
