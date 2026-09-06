@@ -1,7 +1,7 @@
 import { Phone } from "lucide-react";
 
 export function WhatsAppButton() {
-  const phoneNumber = "5511999999999"; // Default/Placeholder
+  const phoneNumber = "559870118577"; // WhatsApp da loja
   const message = encodeURIComponent("Olá! Gostaria de saber mais sobre os produtos da Martins Multimarcas.");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

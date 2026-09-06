@@ -25,9 +25,9 @@ export function Footer() {
           <div>
             <h4 className="font-bold mb-4 uppercase text-xs tracking-widest text-[#C9A84C]">Contato</h4>
             <ul className="text-sm space-y-2 text-[#888]">
-              <li>contato@martinsmultimarcas.com</li>
-              <li>(11) 99999-9999</li>
-              <li>São Paulo, SP</li>
+              <li>contato@martinsmultimarcas.com.br</li>
+              <li>(98) 7011-8577</li>
+              <li>São Luís, MA</li>
             </ul>
           </div>
           <div>
