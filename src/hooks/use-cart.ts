@@ -71,7 +71,9 @@ export const useCart = create<CartStore>()(
       },
     }),
     {
-      name: 'martins-multimarcas-cart',
+      // v2: forçar carrinho limpo (o localStorage antigo tinha total: 0 gravado,
+      // o que sobrescrevia os getters na hidratação)
+      name: 'martins-multimarcas-cart-v2',
       // Salvar apenas os items — evita que os getters (total/itemsCount) sejam
       // sobrescritos por valores antigos ao hidratar do localStorage
       partialize: (state) => ({ items: state.items }),

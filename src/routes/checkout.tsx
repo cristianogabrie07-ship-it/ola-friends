@@ -62,13 +62,23 @@ function CheckoutPage() {
 
   const handleFinishWithWhatsApp = async () => {
     setSending(true);
-    await saveOrder();
 
     const itemsText = items.map(i => `- ${i.name}${i.size ? ` (Tamanho ${i.size})` : ''} x${i.quantity} = R$ ${((i.promo_price || i.price) * i.quantity).toFixed(2)}`).join('\n');
     const message = encodeURIComponent(
       `Olá! Gostaria de finalizar um pedido na Martins Multimarcas 🛍️\n\n*Dados do Cliente:*\nNome: ${formData.name}\nWhatsApp: ${formData.phone}\nEmail: ${formData.email}\n\n*Endereço de Entrega:*\n${formData.address}\n${formData.city} - ${formData.state}, CEP: ${formData.zip}\n\n*Itens do Pedido:*\n${itemsText}\n\n*Total: R$ ${total.toFixed(2)}*\n\nQuais são as formas de pagamento disponíveis?`
     );
-    window.open(`https://wa.me/${STORE_WHATSAPP}?text=${message}`, '_blank');
+    const url = `https://wa.me/${STORE_WHATSAPP}?text=${message}`;
+
+    // Abrir o WhatsApp PRIMEIRO (antes de qualquer await) pra não ser
+    // bloqueado pelo popup blocker do navegador mobile
+    const win = window.open(url, '_blank');
+    if (!win) {
+      // Fallback: se o popup foi bloqueado, navega direto
+      window.location.href = url;
+    }
+
+    // Salvar pedido em background (não bloqueia o fluxo do WhatsApp)
+    await saveOrder();
     clearCart();
     setSending(false);
     setStep('success');
