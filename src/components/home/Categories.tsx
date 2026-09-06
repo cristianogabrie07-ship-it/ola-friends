@@ -1,12 +1,23 @@
 import { motion } from "framer-motion";
-import { Shirt, Package, Users, Watch } from "lucide-react";
+import { Shirt, Package, Users, Watch, Glasses, ShoppingBag } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getStorefrontCategories } from "@/lib/storefront.functions";
 
-const categories = [
-  { name: "Camisas", icon: Shirt, slug: "camisas" },
-  { name: "Calças", icon: Package, slug: "calcas" },
-  { name: "Conjuntos", icon: Users, slug: "conjuntos" },
-  { name: "Acessórios", icon: Watch, slug: "acessorios" },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+const iconBySlug: Record<string, typeof Shirt> = {
+  "camisas-de-time": Shirt,
+  "camisas": Shirt,
+  "conjuntos": Users,
+  "bermudas": Package,
+  "calcas": Package,
+  "acessorios": Glasses,
+  "relogios": Watch,
+};
 
 interface CategoriesProps {
   selectedCategory?: string | undefined;
@@ -14,13 +25,20 @@ interface CategoriesProps {
 }
 
 export function Categories({ selectedCategory, onSelect }: CategoriesProps) {
+  const { data: categories = [] } = useQuery({
+    queryKey: ["home-categories"],
+    queryFn: () => getStorefrontCategories(),
+  });
+
+  if (categories.length === 0) return null;
+
   return (
     <section className="w-full py-8 bg-[#050505]">
       <div className="mx-auto max-w-7xl px-4">
         <h2 className="text-lg font-bold uppercase tracking-wider text-[#C9A84C] mb-6">Categorias</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+          {(categories as Category[]).map((cat) => {
+            const Icon = iconBySlug[cat.slug] || ShoppingBag;
             const isActive = selectedCategory === cat.slug;
             return (
               <motion.button
@@ -41,7 +59,7 @@ export function Categories({ selectedCategory, onSelect }: CategoriesProps) {
               >
                 <div
                   className={`absolute -top-6 -right-6 w-20 h-20 rounded-full blur-2xl transition-opacity ${
-                    isActive ? "opacity-30" : "opacity-0 group-hover:opacity-10"
+                    isActive ? "opacity-30" : "opacity-0"
                   }`}
                   style={{ background: "#C9A84C" }}
                 />
@@ -52,7 +70,7 @@ export function Categories({ selectedCategory, onSelect }: CategoriesProps) {
                 >
                   <Icon size={22} />
                 </div>
-                <span className="text-xs md:text-sm font-semibold uppercase tracking-wide whitespace-nowrap">
+                <span className="text-xs md:text-sm font-semibold uppercase tracking-wide text-center leading-tight">
                   {cat.name}
                 </span>
               </motion.button>

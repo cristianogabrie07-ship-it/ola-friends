@@ -28,7 +28,9 @@ export default function HomePage() {
       <Banner />
       <Categories
         selectedCategory={selectedCategory}
-        onSelect={(slug) => setSelectedCategory(slug === selectedCategory ? undefined : slug)}
+        onSelect={(slug) => {
+          window.location.href = `/shop?category=${encodeURIComponent(slug)}`;
+        }}
       />
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">

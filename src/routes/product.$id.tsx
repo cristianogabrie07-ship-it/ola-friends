@@ -64,11 +64,11 @@ function ProductDetail() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-16">
+    <div className="min-h-screen bg-[#050505] container mx-auto px-4 py-8 md:py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Images */}
         <div className="space-y-4">
-          <div className="aspect-[4/5] bg-neutral-100 overflow-hidden relative border border-border">
+          <div className="aspect-[4/5] bg-[#1A1A1A] overflow-hidden relative rounded-xl border border-[#C9A84C22]">
             {product.images?.[activeImage] ? (
               <img
                 src={product.images[activeImage]}
@@ -77,12 +77,12 @@ function ProductDetail() {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <Package className="w-20 h-20 text-neutral-300" />
+                <Package className="w-20 h-20 text-[#333]" />
               </div>
             )}
             {product.is_sold_out && (
               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span className="bg-white text-black px-6 py-2 font-bold text-lg uppercase tracking-wider">
+                <span className="bg-[#C9A84C] text-[#050505] px-6 py-2 font-bold text-lg uppercase tracking-wider rounded">
                   Esgotado
                 </span>
               </div>
@@ -94,8 +94,8 @@ function ProductDetail() {
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
-                  className={`aspect-square border-2 transition-colors ${
-                    activeImage === idx ? "border-primary" : "border-transparent"
+                  className={`aspect-square border-2 rounded-lg overflow-hidden transition-colors ${
+                    activeImage === idx ? "border-[#C9A84C]" : "border-[#C9A84C22]"
                   }`}
                 >
                   <img src={img} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
@@ -107,38 +107,38 @@ function ProductDetail() {
 
         {/* Info */}
         <div className="flex flex-col">
-          <h1 className="text-3xl md:text-4xl font-bungee tracking-tighter mb-4 uppercase">
+          <h1 className="text-3xl md:text-4xl font-bungee tracking-tighter mb-4 uppercase text-white">
             {product.name}
           </h1>
           
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-8 flex-wrap">
             {product.promo_price ? (
               <>
-                <span className="text-3xl font-bold text-primary">R$ {product.promo_price.toFixed(2)}</span>
-                <span className="text-xl text-muted-foreground line-through">R$ {product.price.toFixed(2)}</span>
-                <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase">Oferta</span>
+                <span className="text-3xl font-bold text-[#C9A84C]">R$ {product.promo_price.toFixed(2)}</span>
+                <span className="text-xl text-[#666] line-through">R$ {product.price.toFixed(2)}</span>
+                <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase rounded">Oferta</span>
               </>
             ) : (
-              <span className="text-3xl font-bold text-primary">R$ {product.price.toFixed(2)}</span>
+              <span className="text-3xl font-bold text-[#C9A84C]">R$ {product.price.toFixed(2)}</span>
             )}
           </div>
 
-          <div className="prose prose-sm mb-8 text-muted-foreground">
+          <div className="prose prose-sm mb-8 text-[#A0A0A0]">
             <p>{product.description || "Sem descrição disponível."}</p>
           </div>
 
           {product.sizes && product.sizes.length > 0 && (
             <div className="mb-8">
-              <span className="block text-sm font-bold uppercase mb-4">Selecione o Tamanho</span>
+              <span className="block text-sm font-bold uppercase mb-4 text-white">Selecione o Tamanho</span>
               <div className="flex flex-wrap gap-3">
                 {product.sizes.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`w-12 h-12 flex items-center justify-center border-2 font-bold transition-all ${
+                    className={`w-12 h-12 flex items-center justify-center border-2 font-bold transition-all rounded-lg ${
                       selectedSize === size
-                        ? "border-primary bg-primary text-white"
-                        : "border-border hover:border-primary"
+                        ? "border-[#C9A84C] bg-[#C9A84C] text-[#050505]"
+                        : "border-[#C9A84C33] text-white hover:border-[#C9A84C]"
                     }`}
                   >
                     {size}
@@ -149,11 +149,11 @@ function ProductDetail() {
           )}
 
           {product.water_resistance && (
-            <div className="mb-8 p-4 bg-neutral-100 border border-border flex items-center gap-3">
-              <Shield className="w-5 h-5 text-primary" />
+            <div className="mb-8 p-4 bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl flex items-center gap-3">
+              <Shield className="w-5 h-5 text-[#C9A84C]" />
               <div>
-                <span className="block text-xs font-bold uppercase text-muted-foreground">Resistência à Água</span>
-                <span className="font-bold">{product.water_resistance}</span>
+                <span className="block text-xs font-bold uppercase text-[#888]">Resistência à Água</span>
+                <span className="font-bold text-white">{product.water_resistance}</span>
               </div>
             </div>
           )}
@@ -162,23 +162,23 @@ function ProductDetail() {
             <button
               onClick={handleAddToCart}
               disabled={!!product.is_sold_out}
-              className="flex-1 bg-primary text-white py-4 font-bungee tracking-tighter hover:bg-primary/90 transition-colors disabled:bg-neutral-400 flex items-center justify-center gap-2"
+              className="flex-1 bg-[#C9A84C] text-[#050505] py-4 font-bungee tracking-tighter hover:brightness-110 transition-colors disabled:bg-[#333] rounded-lg flex items-center justify-center gap-2"
             >
               <ShoppingCart className="w-5 h-5" />
               Adicionar ao Carrinho
             </button>
-            <button className="p-4 border border-border hover:bg-neutral-50 transition-colors">
-              <Heart className="w-6 h-6" />
+            <button className="p-4 border border-[#C9A84C33] hover:bg-[#1A1A1A] transition-colors rounded-lg">
+              <Heart className="w-6 h-6 text-white" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8 border-t border-border">
-            <div className="flex items-center gap-3 text-sm">
-              <Truck className="w-5 h-5 text-primary" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8 border-t border-[#C9A84C22]">
+            <div className="flex items-center gap-3 text-sm text-[#A0A0A0]">
+              <Truck className="w-5 h-5 text-[#C9A84C]" />
               <span>Entrega rápida em todo o Brasil</span>
             </div>
-            <div className="flex items-center gap-3 text-sm">
-              <RefreshCcw className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-3 text-sm text-[#A0A0A0]">
+              <RefreshCcw className="w-5 h-5 text-[#C9A84C]" />
               <span>7 dias para trocas e devoluções</span>
             </div>
           </div>
