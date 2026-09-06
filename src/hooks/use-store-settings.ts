@@ -34,7 +34,7 @@ export function useStoreSettings() {
             whatsapp: (data as any).whatsapp || null,
             email: (data as any).email || null,
             instagram: (data as any).instagram || null,
-            pix_discount_percent: Number((data as any).pix_discount_percent ?? 10),
+            pix_discount_percent: Number((data as any).pix_discount_percent ?? 0),
           };
           cached = s;
           setSettings(s);

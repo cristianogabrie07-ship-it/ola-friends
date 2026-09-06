@@ -3,7 +3,7 @@ import { useStoreSettings } from "@/hooks/use-store-settings";
 
 export default function Banner() {
   const { settings } = useStoreSettings();
-  const pixDiscount = settings?.pix_discount_percent ?? 10;
+  const pixDiscount = settings?.pix_discount_percent ?? 0;
   return (
     <section className="relative w-full overflow-hidden min-h-[380px] md:min-h-[440px] flex items-center justify-center">
       {/* Fundo gerado: gradiente radial dourado + textura de grade sutil, sem depender de foto */}

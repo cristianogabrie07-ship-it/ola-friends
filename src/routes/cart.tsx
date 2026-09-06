@@ -11,7 +11,7 @@ function CartPage() {
   const { items, removeItem, updateQuantity } = useCart();
   const total = getCartTotal(items);
   const { settings } = useStoreSettings();
-  const pixDiscount = settings?.pix_discount_percent ?? 10;
+  const pixDiscount = settings?.pix_discount_percent ?? 0;
 
   if (items.length === 0) {
     return (

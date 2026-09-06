@@ -17,7 +17,7 @@ function CheckoutPage() {
   const { items, clearCart } = useCart();
   const total = getCartTotal(items);
   const { settings } = useStoreSettings();
-  const pixDiscount = settings?.pix_discount_percent ?? 10;
+  const pixDiscount = settings?.pix_discount_percent ?? 0;
   const totalWithPix = total * (1 - pixDiscount / 100);
   const storeWhatsapp = settings?.whatsapp?.replace(/\D/g, "") || STORE_WHATSAPP;
   const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');

@@ -12,7 +12,7 @@ export function AdminSettings() {
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [instagram, setInstagram] = useState("");
-  const [pixDiscount, setPixDiscount] = useState("10");
+  const [pixDiscount, setPixDiscount] = useState("0");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -26,7 +26,7 @@ export function AdminSettings() {
       setWhatsapp((data as any).whatsapp || "");
       setEmail((data as any).email || "");
       setInstagram((data as any).instagram || "");
-      setPixDiscount(String((data as any).pix_discount_percent ?? 10));
+      setPixDiscount(String((data as any).pix_discount_percent ?? 0));
     }
   }
 
