@@ -104,7 +104,6 @@ export function Header() {
           </div>
           <Link to="/" className="hover:text-[#C9A84C] transition-colors">Início</Link>
           <Link to="/shop" className="hover:text-[#C9A84C] transition-colors">Produtos</Link>
-          <Link to="/shop" search={{ sale: true }} className="hover:text-[#C9A84C] transition-colors">Liquidação</Link>
         </div>
       </nav>
 
@@ -138,7 +137,6 @@ export function Header() {
           <div className="container mx-auto px-4 py-5 flex flex-col gap-4 text-sm font-bold uppercase tracking-[0.15em]">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="hover:text-[#C9A84C]">Início</Link>
             <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="hover:text-[#C9A84C]">Produtos</Link>
-            <Link to="/shop" search={{ sale: true }} onClick={() => setIsMenuOpen(false)} className="hover:text-[#C9A84C]">Liquidação</Link>
             <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="hover:text-[#C9A84C]">Admin</Link>
             <div className="relative mt-2">
               <input

@@ -19,7 +19,6 @@ export function Footer() {
             <ul className="text-sm space-y-2 text-[#888]">
               <li><Link to="/" className="hover:text-[#C9A84C] transition-colors">Início</Link></li>
               <li><Link to="/shop" className="hover:text-[#C9A84C] transition-colors">Produtos</Link></li>
-              <li><Link to="/shop" search={{ sale: true }} className="hover:text-[#C9A84C] transition-colors">Liquidação</Link></li>
             </ul>
           </div>
           <div>
