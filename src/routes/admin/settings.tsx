@@ -15,6 +15,7 @@ export function AdminSettings() {
   const [pixDiscount, setPixDiscount] = useState("0");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => { loadSettings(); }, []);
 
@@ -32,14 +33,34 @@ export function AdminSettings() {
 
   async function handleSave() {
     setSaving(true);
+    setSaveError(null);
     const { data } = await supabase.from("stores" as any).select("id").limit(1).single();
     if (data) {
       const payload = { name, slogan, whatsapp, email, instagram, pix_discount_percent: Number(pixDiscount) || 0 };
-      await supabase.from("stores" as any).update(payload).eq("id", (data as any).id);
+      // .select() faz o update retornar as linhas alteradas — se vier vazio,
+      // o RLS bloqueou a operação e precisamos avisar em vez de fingir sucesso.
+      const { data: updated, error } = await supabase
+        .from("stores" as any)
+        .update(payload)
+        .eq("id", (data as any).id)
+        .select();
+      setSaving(false);
+      if (error) {
+        setSaveError(error.message);
+        return;
+      }
+      if (!updated || updated.length === 0) {
+        setSaveError("O banco bloqueou a gravação (RLS). Rode no SQL Editor do Supabase: UPDATE public.stores SET pix_discount_percent = " + (Number(pixDiscount) || 0) + "; — ou verifique a política de UPDATE da tabela stores.");
+        return;
+      }
     } else {
-      await supabase.from("stores" as any).insert([{ name, slogan, whatsapp, email, instagram, pix_discount_percent: Number(pixDiscount) || 0 }]);
+      const { error } = await supabase.from("stores" as any).insert([{ name, slogan, whatsapp, email, instagram, pix_discount_percent: Number(pixDiscount) || 0 }]);
+      setSaving(false);
+      if (error) {
+        setSaveError(error.message);
+        return;
+      }
     }
-    setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -81,6 +102,11 @@ export function AdminSettings() {
           className="bg-[#C9A84C] text-[#050505] font-bold text-sm uppercase tracking-wider px-8 py-3 rounded-lg hover:brightness-110 transition-all disabled:opacity-50 text-left">
           {saving ? "Salvando..." : saved ? "✓ Salvo!" : "Salvar Alterações"}
         </button>
+        {saveError && (
+          <div className="bg-red-950 border border-red-500/40 text-red-300 text-xs rounded-lg p-4">
+            ⚠️ Erro ao salvar: {saveError}
+          </div>
+        )}
       </div>
     </div>
   );
