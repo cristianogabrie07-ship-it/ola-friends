@@ -115,6 +115,7 @@ export type Database = {
           promo_price: number | null
           sizes: string[] | null
           stock: number | null
+          video_url: string | null
           water_resistance: string | null
         }
         Insert: {
@@ -130,6 +131,7 @@ export type Database = {
           promo_price?: number | null
           sizes?: string[] | null
           stock?: number | null
+          video_url?: string | null
           water_resistance?: string | null
         }
         Update: {
@@ -145,6 +147,7 @@ export type Database = {
           promo_price?: number | null
           sizes?: string[] | null
           stock?: number | null
+          video_url?: string | null
           water_resistance?: string | null
         }
         Relationships: [

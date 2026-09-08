@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Play } from "lucide-react";
 import { ShoppingCart, Heart, Shield, Truck, RefreshCcw, Package } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
@@ -28,6 +29,12 @@ function ProductDetail() {
       return data;
     },
   });
+
+  // Mídia do produto: vídeo (se houver) + foto — no máximo 1 de cada
+  const mediaItems = [
+    ...(product?.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
+    ...(product?.images?.[0] ? [{ type: "image" as const, url: product.images[0] }] : []),
+  ];
 
   if (isLoading) {
     return (
@@ -69,9 +76,25 @@ function ProductDetail() {
         {/* Images */}
         <div className="space-y-4">
           <div className="aspect-[4/5] bg-[#1A1A1A] overflow-hidden relative rounded-xl border border-[#C9A84C22]">
-            {product.images?.[activeImage] ? (
+            {mediaItems[activeImage]?.type === "video" ? (
+              <video
+                src={mediaItems[activeImage].url}
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : mediaItems[activeImage]?.type === "image" ? (
               <img
-                src={product.images[activeImage]}
+                src={mediaItems[activeImage].url}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : product.images?.[0] ? (
+              <img
+                src={product.images[0]}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -88,17 +111,26 @@ function ProductDetail() {
               </div>
             )}
           </div>
-          {product.images && product.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.map((img, idx) => (
+          {mediaItems.length > 1 && (
+            <div className="grid grid-cols-2 gap-4 max-w-[240px]">
+              {mediaItems.map((item, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
-                  className={`aspect-square border-2 rounded-lg overflow-hidden transition-colors ${
+                  className={`relative aspect-square border-2 rounded-lg overflow-hidden transition-colors ${
                     activeImage === idx ? "border-[#C9A84C]" : "border-[#C9A84C22]"
                   }`}
                 >
-                  <img src={img} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
+                  {item.type === "video" ? (
+                    <>
+                      <video src={item.url} muted className="w-full h-full object-cover" />
+                      <span className="absolute inset-0 flex items-center justify-center bg-black/40">
+                        <Play className="w-6 h-6 text-white" />
+                      </span>
+                    </>
+                  ) : (
+                    <img src={item.url} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
+                  )}
                 </button>
               ))}
             </div>
@@ -122,6 +154,7 @@ function ProductDetail() {
               <span className="text-3xl font-bold text-[#C9A84C]">R$ {product.price.toFixed(2)}</span>
             )}
           </div>
+          <p className="text-sm text-[#888] -mt-4 mb-6">💳 Em até 12x no cartão de crédito — consulte as condições</p>
 
           <div className="prose prose-sm mb-8 text-[#A0A0A0]">
             <p>{product.description || "Sem descrição disponível."}</p>

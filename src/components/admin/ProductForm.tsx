@@ -42,7 +42,8 @@ const productSchema = z.object({
   is_active: z.boolean().nullable().optional(),
   is_sold_out: z.boolean().nullable().optional(),
   sizes: z.array(z.string()).nullable().optional(),
-  images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória").nullable().optional(),
+  images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória").max(1, "Apenas 1 imagem por produto").nullable().optional(),
+  video_url: z.string().nullable().optional(),
   water_resistance: z.string().nullable().optional(),
 });
 
@@ -73,51 +74,55 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
       is_sold_out: initialData?.is_sold_out ?? false,
       sizes: initialData?.sizes || [],
       images: initialData?.images || [],
+      video_url: initialData?.video_url || null,
       water_resistance: initialData?.water_resistance || null,
     },
   });
 
 
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<"image" | "video" | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadImages = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    setUploading(true);
+  const uploadFile = async (file: File, kind: "image" | "video") => {
+    setUploading(kind);
     setUploadError(null);
-    const current = form.getValues("images") || [];
-    const uploaded: string[] = [];
 
     try {
-      for (const file of Array.from(files)) {
-        if (!file.type.startsWith("image/")) continue;
-        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-        const { error } = await supabase.storage
-          .from("product-images")
-          .upload(fileName, file, { cacheControl: "3600", upsert: false });
-        if (error) throw error;
-        const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
-        uploaded.push(data.publicUrl);
-      }
-      if (uploaded.length > 0) {
-        form.setValue("images", [...current, ...uploaded], { shouldValidate: true });
+      const ext = file.name.split(".").pop()?.toLowerCase() || (kind === "video" ? "mp4" : "jpg");
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("product-images")
+        .upload(fileName, file, { cacheControl: "3600", upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
+
+      if (kind === "image") {
+        form.setValue("images", [data.publicUrl], { shouldValidate: true });
+      } else {
+        form.setValue("video_url", data.publicUrl, { shouldValidate: true });
       }
     } catch (err) {
       console.error(err);
       setUploadError(
-        "Falha no upload. Verifique se o bucket 'product-images' existe e se seu usuário tem permissão de admin no banco."
+        kind === "video"
+          ? "Falha no upload do vídeo. Verifique o tamanho (máx. 50MB) e se rode o SQL setup-video.sql no Supabase."
+          : "Falha no upload. Verifique se o bucket 'product-images' existe e se seu usuário tem permissão de admin no banco."
       );
     } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      setUploading(null);
+      if (kind === "image" && imageInputRef.current) imageInputRef.current.value = "";
+      if (kind === "video" && videoInputRef.current) videoInputRef.current.value = "";
     }
   };
 
-  const removeImage = (index: number) => {
-    const current = form.getValues("images") || [];
-    form.setValue("images", current.filter((_, i) => i !== index), { shouldValidate: true });
+  const removeImage = () => {
+    form.setValue("images", [], { shouldValidate: true });
+  };
+
+  const removeVideo = () => {
+    form.setValue("video_url", null, { shouldValidate: false });
   };
 
   const selectedCategoryId = form.watch("category_id");
@@ -280,65 +285,121 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
               </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="uppercase font-bold text-xs">Imagens do Produto</FormLabel>
-                  <FormControl>
-                    <div className="space-y-3">
-                      {field.value && field.value.length > 0 && (
-                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                          {field.value.map((url, idx) => (
-                            <div key={`${url}-${idx}`} className="relative group aspect-square border border-neutral-300 overflow-hidden">
-                              <img src={url} alt={`Imagem ${idx + 1}`} className="w-full h-full object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(idx)}
-                                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                aria-label="Remover imagem"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        onChange={(e) => uploadImages(e.target.files)}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={uploading}
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full rounded-none border-neutral-300 uppercase text-xs font-bold tracking-wide"
-                      >
-                        {uploading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Enviando...
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="mr-2 h-4 w-4" />
-                            Enviar Imagens (celular ou computador)
-                          </>
-                        )}
-                      </Button>
-                      {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
-                      <FormMessage />
-                    </div>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="uppercase font-bold text-xs">Foto do Produto (1)</FormLabel>
+                    <FormControl>
+                      <div className="space-y-3">
+                        {field.value && field.value.length > 0 ? (
+                          <div className="relative aspect-square w-32 border border-neutral-300 overflow-hidden">
+                            <img src={field.value[0]} alt="Foto do produto" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={removeImage}
+                              className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1"
+                              aria-label="Remover foto"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ) : null}
+                        <input
+                          ref={imageInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) uploadFile(f, "image");
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={uploading !== null}
+                          onClick={() => imageInputRef.current?.click()}
+                          className="w-full rounded-none border-neutral-300 uppercase text-xs font-bold tracking-wide"
+                        >
+                          {uploading === "image" ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Enviando...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Enviar Foto
+                            </>
+                          )}
+                        </Button>
+                        <FormMessage />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="video_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="uppercase font-bold text-xs">Vídeo do Produto (1, opcional)</FormLabel>
+                    <FormControl>
+                      <div className="space-y-3">
+                        {field.value ? (
+                          <div className="relative">
+                            <video src={field.value} controls className="w-full max-w-[220px] aspect-square object-cover border border-neutral-300" />
+                            <button
+                              type="button"
+                              onClick={removeVideo}
+                              className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1"
+                              aria-label="Remover vídeo"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ) : null}
+                        <input
+                          ref={videoInputRef}
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) uploadFile(f, "video");
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={uploading !== null}
+                          onClick={() => videoInputRef.current?.click()}
+                          className="w-full rounded-none border-neutral-300 uppercase text-xs font-bold tracking-wide"
+                        >
+                          {uploading === "video" ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Enviando vídeo...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Enviar Vídeo (máx. 50MB)
+                            </>
+                          )}
+                        </Button>
+                        {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="flex gap-6">
               <FormField

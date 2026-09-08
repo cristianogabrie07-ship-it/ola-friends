@@ -32,7 +32,6 @@ export function ProductCard({ product }: { product: Product }) {
   };
 
   const finalPrice = product.promo_price || product.price;
-  const installments = finalPrice / 12;
 
   return (
     <div className="group relative bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl overflow-hidden hover:border-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.1)] transition-all duration-200">
@@ -72,7 +71,7 @@ export function ProductCard({ product }: { product: Product }) {
               <span className="text-[#C9A84C] font-bold text-base">R$ {product.price.toFixed(2).replace(".", ",")}</span>
             )}
           </div>
-          <p className="text-[#666] text-[11px] mt-0.5">12x de R$ {installments.toFixed(2).replace(".", ",")}</p>
+          <p className="text-[#666] text-[11px] mt-0.5">Em até 12x no cartão — consulte as condições</p>
         </div>
       </Link>
       <div className="px-3 pb-3 flex items-center gap-2">
