@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -27,7 +28,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
+import { Upload, Loader2, X } from "lucide-react";
 
 const productSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -74,6 +77,48 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
     },
   });
 
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadImages = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setUploadError(null);
+    const current = form.getValues("images") || [];
+    const uploaded: string[] = [];
+
+    try {
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith("image/")) continue;
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error } = await supabase.storage
+          .from("product-images")
+          .upload(fileName, file, { cacheControl: "3600", upsert: false });
+        if (error) throw error;
+        const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
+        uploaded.push(data.publicUrl);
+      }
+      if (uploaded.length > 0) {
+        form.setValue("images", [...current, ...uploaded], { shouldValidate: true });
+      }
+    } catch (err) {
+      console.error(err);
+      setUploadError(
+        "Falha no upload. Verifique se o bucket 'product-images' existe e se seu usuário tem permissão de admin no banco."
+      );
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const current = form.getValues("images") || [];
+    form.setValue("images", current.filter((_, i) => i !== index), { shouldValidate: true });
+  };
 
   const selectedCategoryId = form.watch("category_id");
   const selectedCategory = categories.find(c => c.id === selectedCategoryId);
@@ -240,16 +285,57 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="uppercase font-bold text-xs">URLs das Imagens (uma por linha)</FormLabel>
+                  <FormLabel className="uppercase font-bold text-xs">Imagens do Produto</FormLabel>
                   <FormControl>
-                    <Textarea
-                      value={field.value?.join("\n")}
-                      onChange={(e) => field.onChange(e.target.value.split("\n").filter(Boolean))}
-                      placeholder="https://exemplo.com/imagem1.jpg"
-                      className="rounded-none border-neutral-300 min-h-[80px]"
-                    />
+                    <div className="space-y-3">
+                      {field.value && field.value.length > 0 && (
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          {field.value.map((url, idx) => (
+                            <div key={`${url}-${idx}`} className="relative group aspect-square border border-neutral-300 overflow-hidden">
+                              <img src={url} alt={`Imagem ${idx + 1}`} className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(idx)}
+                                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                aria-label="Remover imagem"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={(e) => uploadImages(e.target.files)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={uploading}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full rounded-none border-neutral-300 uppercase text-xs font-bold tracking-wide"
+                      >
+                        {uploading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Enviar Imagens (celular ou computador)
+                          </>
+                        )}
+                      </Button>
+                      {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
+                      <FormMessage />
+                    </div>
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
