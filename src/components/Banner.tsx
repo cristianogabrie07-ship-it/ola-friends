@@ -5,16 +5,18 @@ export default function Banner() {
   const { settings } = useStoreSettings();
   const pixDiscount = settings?.pix_discount_percent ?? 0;
   return (
-    <section className="relative w-full overflow-hidden bg-[#050505]">
-      <motion.img
-        src="/banner.webp"
-        alt="Martins Multimarcas — Parcele em até 12x, compra 100% segura e envio para todo o Brasil"
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        className="w-full h-auto block"
-        fetchPriority="high"
-      />
+    <section className="relative w-full overflow-hidden bg-[#050505] py-4 md:py-6">
+      <div className="mx-auto max-w-6xl px-4">
+        <motion.img
+          src="/banner.webp"
+          alt="Martins Multimarcas — Parcele em até 12x, compra 100% segura e envio para todo o Brasil"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="w-full h-auto block rounded-xl"
+          fetchPriority="high"
+        />
+      </div>
 
       {/* Selo opcional de desconto PIX sobreposto ao banner */}
       {pixDiscount > 0 && (
