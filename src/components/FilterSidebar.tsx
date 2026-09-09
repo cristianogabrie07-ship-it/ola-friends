@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const sizes = ["P", "M", "G", "GG", "XGG"];
+const sizes = ["P", "M", "G", "GG", "XG"];
 const priceRanges = [
   { label: "Até R$ 50", min: 0, max: 50 },
   { label: "R$ 50 - R$ 100", min: 50, max: 100 },

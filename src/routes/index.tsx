@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import Banner from "@/components/Banner";
 import { Categories } from "@/components/home/Categories";
@@ -22,6 +22,21 @@ export default function HomePage() {
     queryKey: ["featured-products"],
     queryFn: () => getFeaturedProducts(),
   });
+
+  // Filtros de tamanho e preço aplicados de verdade à lista
+  const filteredProducts = useMemo(() => {
+    let list = products || [];
+    if (filters.sizes.length > 0) {
+      list = list.filter((p) => (p.sizes || []).some((s) => filters.sizes.includes(s)));
+    }
+    if (filters.priceRange) {
+      list = list.filter((p) => {
+        const price = p.promo_price || p.price;
+        return price >= filters.priceRange!.min && price <= filters.priceRange!.max;
+      });
+    }
+    return list;
+  }, [products, filters]);
 
   return (
     <div className="min-h-screen bg-[#050505]">
@@ -48,9 +63,9 @@ export default function HomePage() {
                   <div key={i} className="aspect-[3/4] bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl" />
                 ))}
               </div>
-            ) : products && products.length > 0 ? (
+            ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <ProductCard 
                     key={product.id} 
                     product={product} 

@@ -75,10 +75,6 @@ export default function Banner() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-wrap gap-2 md:gap-3 justify-center px-2"
           >
-            <div className="flex items-center gap-1.5 md:gap-2 border border-[#C9A84C44] rounded-full px-3 md:px-4 py-1.5 md:py-2 bg-[#050505]/70 backdrop-blur-sm">
-              <span className="text-sm md:text-base">🔥</span>
-              <span className="text-[10px] md:text-sm text-[#A0A0A0]">Estilo urbano</span>
-            </div>
             {pixDiscount > 0 && (
               <div className="flex items-center gap-1.5 md:gap-2 border border-[#C9A84C44] rounded-full px-3 md:px-4 py-1.5 md:py-2 bg-[#050505]/70 backdrop-blur-sm">
                 <span className="text-sm md:text-base">💳</span>
