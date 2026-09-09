@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import Banner from "@/components/Banner";
+import { BestSellers } from "@/components/home/BestSellers";
 import { Categories } from "@/components/home/Categories";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { ProductCard } from "@/components/ProductCard";
@@ -41,6 +42,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#050505]">
       <Banner />
+      <BestSellers />
       <Categories
         selectedCategory={selectedCategory}
         onSelect={(slug) => {
