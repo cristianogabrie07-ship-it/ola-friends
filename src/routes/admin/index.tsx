@@ -11,8 +11,8 @@ function AdminDashboard() {
   const { data: stats } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const { data: orders } = await supabase.from('orders').select('total');
-      const totalSales = orders?.reduce((acc, o) => acc + Number(o.total), 0) || 0;
+      const { data: orders } = await supabase.from('orders').select('total_amount');
+      const totalSales = orders?.reduce((acc, o) => acc + Number((o as any).total_amount ?? 0), 0) || 0;
       return {
         totalOrders: orders?.length || 0,
         totalSales,

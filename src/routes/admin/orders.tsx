@@ -97,7 +97,7 @@ export function AdminOrders() {
                       <p className="text-[#A0A0A0] text-xs">{new Date(order.created_at).toLocaleString("pt-BR")}</p>
                     </div>
                   </button>
-                  <p className="text-[#C9A84C] font-bold">{formatMoney(order.total)}</p>
+                  <p className="text-[#C9A84C] font-bold">{formatMoney(Number((order as any).total_amount ?? order.total))}</p>
                   <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${statusColors[order.status] || "bg-[#1A1A1A] text-[#A0A0A0] border-[#C9A84C22]"}`}>
                     {statusList.map((s) => (

@@ -33,7 +33,14 @@ function CheckoutPage() {
   });
 
   const saveOrder = async () => {
+    // A tabela orders tem colunas próprias (customer_name, total_amount, etc.)
+    // — os dados completos também vão em customer_details para o painel admin.
     const { error } = await supabase.from('orders').insert({
+      customer_name: formData.name,
+      customer_email: formData.email,
+      customer_phone: formData.phone,
+      address: formData.address,
+      total_amount: total,
       customer_details: {
         fullName: formData.name,
         email: formData.email,
@@ -52,10 +59,9 @@ function CheckoutPage() {
         color: i.color,
         quantity: i.quantity,
       })),
-      total,
       payment_method: 'whatsapp',
       status: 'pendente',
-    });
+    } as any);
     if (error) {
       console.error('Erro ao salvar pedido:', error);
       toast.error('Erro ao registrar pedido. Tente novamente.');
