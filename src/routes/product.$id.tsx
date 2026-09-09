@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Play } from "lucide-react";
-import { ShoppingCart, Heart, Shield, Truck, RefreshCcw, Package } from "lucide-react";
+import { ShoppingCart, Heart, Truck, RefreshCcw, Package } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -11,10 +11,16 @@ export const Route = createFileRoute("/product/$id")({
   component: ProductDetail,
 });
 
+interface ColorVariant {
+  name: string;
+  image: string;
+}
+
 function ProductDetail() {
   const { id } = Route.useParams();
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
@@ -30,10 +36,16 @@ function ProductDetail() {
     },
   });
 
-  // Mídia do produto: vídeo (se houver) + foto — no máximo 1 de cada
+  // Mídia do produto: vídeo (se houver) + foto — no máximo 1 de cada.
+  // Se uma COR estiver selecionada e tiver foto própria, ela vira a mídia principal.
+  const colorVariants: ColorVariant[] = Array.isArray(product?.color_variants)
+    ? (product.color_variants as unknown as ColorVariant[]).filter((v) => v?.name)
+    : [];
+  const selectedVariant = colorVariants.find((v) => v.name === selectedColor);
   const mediaItems = [
-    ...(product?.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
-    ...(product?.images?.[0] ? [{ type: "image" as const, url: product.images[0] }] : []),
+    ...(selectedVariant?.image ? [{ type: "image" as const, url: selectedVariant.image }] : []),
+    ...(product?.video_url && !selectedVariant?.image ? [{ type: "video" as const, url: product.video_url }] : []),
+    ...(!selectedVariant?.image && product?.images?.[0] ? [{ type: "image" as const, url: product.images[0] }] : []),
   ];
 
   if (isLoading) {
@@ -63,8 +75,9 @@ function ProductDetail() {
       name: product.name,
       price: product.price,
       promo_price: product.promo_price || undefined,
-      image: product.images?.[0] || "",
+      image: selectedVariant?.image || product.images?.[0] || "",
       size: selectedSize,
+      color: selectedColor || undefined,
       quantity: 1,
     });
     toast.success("Produto adicionado ao carrinho!");
@@ -160,6 +173,35 @@ function ProductDetail() {
             <p>{product.description || "Sem descrição disponível."}</p>
           </div>
 
+          {colorVariants.length > 0 && (
+            <div className="mb-8">
+              <span className="block text-sm font-bold uppercase mb-4 text-white">Cor</span>
+              <div className="flex flex-wrap gap-3">
+                {colorVariants.map((variant) => (
+                  <button
+                    key={variant.name}
+                    onClick={() => {
+                      setSelectedColor(variant.name);
+                      setActiveImage(0);
+                    }}
+                    className={`flex items-center gap-2 border-2 pl-1 pr-3 py-1 font-bold transition-all rounded-full ${
+                      selectedColor === variant.name
+                        ? "border-[#C9A84C] bg-[#C9A84C] text-[#050505]"
+                        : "border-[#C9A84C33] text-white hover:border-[#C9A84C]"
+                    }`}
+                  >
+                    {variant.image ? (
+                      <img src={variant.image} alt={variant.name} className="w-8 h-8 rounded-full object-cover" />
+                    ) : (
+                      <span className="w-8 h-8 rounded-full bg-[#1A1A1A] inline-block" />
+                    )}
+                    {variant.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {product.sizes && product.sizes.length > 0 && (
             <div className="mb-8">
               <span className="block text-sm font-bold uppercase mb-4 text-white">Selecione o Tamanho</span>
@@ -177,16 +219,6 @@ function ProductDetail() {
                     {size}
                   </button>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {product.water_resistance && (
-            <div className="mb-8 p-4 bg-[#0D0D0D] border border-[#C9A84C22] rounded-xl flex items-center gap-3">
-              <Shield className="w-5 h-5 text-[#C9A84C]" />
-              <div>
-                <span className="block text-xs font-bold uppercase text-[#888]">Resistência à Água</span>
-                <span className="font-bold text-white">{product.water_resistance}</span>
               </div>
             </div>
           )}

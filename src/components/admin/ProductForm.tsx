@@ -30,7 +30,28 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
-import { Upload, Loader2, X } from "lucide-react";
+import { Upload, Loader2, X, Plus } from "lucide-react";
+
+export interface ColorVariant {
+  name: string;
+  image: string;
+}
+
+export interface ProductFormValuesWithVariants {
+  name: string;
+  description: string | null | undefined;
+  price: number;
+  promo_price: number | null | undefined;
+  category_id: string;
+  stock: number;
+  is_active: boolean | null | undefined;
+  is_sold_out: boolean | null | undefined;
+  sizes: string[] | null | undefined;
+  images: string[] | null | undefined;
+  video_url: string | null | undefined;
+  water_resistance: string | null | undefined;
+  color_variants: ColorVariant[];
+}
 
 const productSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -45,6 +66,7 @@ const productSchema = z.object({
   images: z.array(z.string()).min(1, "Pelo menos uma imagem é obrigatória").max(1, "Apenas 1 imagem por produto").nullable().optional(),
   video_url: z.string().nullable().optional(),
   water_resistance: z.string().nullable().optional(),
+  color_variants: z.array(z.object({ name: z.string(), image: z.string() })).optional(),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
@@ -76,9 +98,10 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
       images: initialData?.images || [],
       video_url: initialData?.video_url || null,
       water_resistance: initialData?.water_resistance || null,
-    },
-  });
+      color_variants: initialData?.color_variants || [],
+    },  });
 
+  const [colorVariants, setColorVariants] = useState<ColorVariant[]>(initialData?.color_variants || []);
 
   const [uploading, setUploading] = useState<"image" | "video" | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -125,9 +148,51 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
     form.setValue("video_url", null, { shouldValidate: false });
   };
 
+  // ---- Variações de cor ----
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const uploadingColorIndex = useRef<number | null>(null);
+  const [uploadingColor, setUploadingColor] = useState(false);
+
+  const uploadColorImage = async (file: File, index: number) => {
+    setUploadingColor(true);
+    setUploadError(null);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error } = await supabase.storage
+        .from("product-images")
+        .upload(fileName, file, { cacheControl: "3600", upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
+      setColorVariants((prev) => prev.map((v, i) => (i === index ? { ...v, image: data.publicUrl } : v)));
+    } catch (err) {
+      console.error(err);
+      setUploadError("Falha no upload da foto da cor. Tente novamente.");
+    } finally {
+      setUploadingColor(false);
+      uploadingColorIndex.current = null;
+      if (colorInputRef.current) colorInputRef.current.value = "";
+    }
+  };
+
+  const addColorVariant = () => {
+    setColorVariants((prev) => [...prev, { name: "", image: "" }]);
+  };
+
+  const removeColorVariant = (index: number) => {
+    setColorVariants((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateColorName = (index: number, name: string) => {
+    setColorVariants((prev) => prev.map((v, i) => (i === index ? { ...v, name } : v)));
+  };
+
   const selectedCategoryId = form.watch("category_id");
-  const selectedCategory = categories.find(c => c.id === selectedCategoryId);
-  const isWatch = selectedCategory?.slug === "relogios";
+
+  const handleFormSubmit = (values: ProductFormValues) => {
+    // Inclui as variações de cor no payload enviado ao banco
+    onSubmit({ ...values, color_variants: colorVariants.filter(v => v.name.trim()) });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -139,7 +204,7 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-4">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6 py-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -239,22 +304,6 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
               />
             </div>
 
-            {isWatch && (
-              <FormField
-                control={form.control}
-                name="water_resistance"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase font-bold text-xs">Resistência à Água</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value || ""} className="rounded-none border-neutral-300" placeholder="Ex: 50m, 10 ATM" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
             <div className="space-y-3">
               <p className="uppercase font-bold text-xs">Tamanhos Disponíveis</p>
               <div className="flex flex-wrap gap-4">
@@ -283,6 +332,97 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
                   />
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="uppercase font-bold text-xs">Cores Disponíveis (variações)</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addColorVariant}
+                  className="rounded-none border-neutral-300 uppercase text-xs font-bold"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Adicionar Cor
+                </Button>
+              </div>
+              {colorVariants.length === 0 && (
+                <p className="text-xs text-neutral-500">
+                  Opcional: adicione variações de cor (ex: Preto, Branco). Cada cor pode ter sua própria foto —
+                  o cliente seleciona a cor na página do produto e a foto troca.
+                </p>
+              )}
+              <div className="space-y-3">
+                {colorVariants.map((variant, index) => (
+                  <div key={index} className="flex items-end gap-3 border border-neutral-200 p-3">
+                    <div className="flex-1 space-y-2">
+                      <Input
+                        placeholder="Nome da cor (ex: Preto)"
+                        value={variant.name}
+                        onChange={(e) => updateColorName(index, e.target.value)}
+                        className="rounded-none border-neutral-300"
+                      />
+                      {variant.image ? (
+                        <div className="relative w-16 h-16 border border-neutral-300 overflow-hidden">
+                          <img src={variant.image} alt={variant.name || "Cor"} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setColorVariants(prev => prev.map((v, i) => i === index ? { ...v, image: "" } : v))}
+                            className="absolute top-0.5 right-0.5 bg-black/70 text-white rounded-full p-0.5"
+                            aria-label="Remover foto da cor"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={uploadingColor}
+                          onClick={() => {
+                            uploadingColorIndex.current = index;
+                            colorInputRef.current?.click();
+                          }}
+                          className="w-full rounded-none border-neutral-300 uppercase text-xs"
+                        >
+                          {uploadingColor && uploadingColorIndex.current === index ? (
+                            <>
+                              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                              Enviando...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-3 w-3" />
+                              Foto da Cor
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeColorVariant(index)}
+                      className="text-neutral-400 hover:text-red-500 pb-2"
+                      aria-label="Remover cor"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <input
+                ref={colorInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f && uploadingColorIndex.current !== null) uploadColorImage(f, uploadingColorIndex.current);
+                }}
+              />
+              {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

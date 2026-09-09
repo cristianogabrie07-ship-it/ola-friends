@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Shirt, Package, Users, Watch, Glasses, ShoppingBag } from "lucide-react";
+import { Shirt, Package, Users, ShoppingBag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getStorefrontCategories } from "@/lib/storefront.functions";
 
@@ -11,12 +11,14 @@ interface Category {
 
 const iconBySlug: Record<string, typeof Shirt> = {
   "camisas-de-time": Shirt,
+  "camisas-de-time-europeu": Shirt,
+  "camisa-dry-fit": Shirt,
   "camisas": Shirt,
   "conjuntos": Users,
   "bermudas": Package,
+  "bermuda-dry-fit": Package,
+  "bermuda-jeans": Package,
   "calcas": Package,
-  "acessorios": Glasses,
-  "relogios": Watch,
 };
 
 interface CategoriesProps {

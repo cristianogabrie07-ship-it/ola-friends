@@ -49,6 +49,7 @@ function CheckoutPage() {
         price: i.price,
         promo_price: i.promo_price,
         size: i.size,
+        color: i.color,
         quantity: i.quantity,
       })),
       total,
@@ -69,7 +70,7 @@ function CheckoutPage() {
   const handleFinishWithWhatsApp = async () => {
     setSending(true);
 
-    const itemsText = items.map(i => `- ${i.name}${i.size ? ` (Tamanho ${i.size})` : ''} x${i.quantity} = R$ ${((i.promo_price || i.price) * i.quantity).toFixed(2)}`).join('\n');
+    const itemsText = items.map(i => `- ${i.name}${i.color ? ` (Cor: ${i.color})` : ''}${i.size ? ` (Tamanho ${i.size})` : ''} x${i.quantity} = R$ ${((i.promo_price || i.price) * i.quantity).toFixed(2)}`).join('\n');
     const pixLine = pixDiscount > 0
       ? `\n*Total com PIX (${pixDiscount}% OFF): R$ ${totalWithPix.toFixed(2)}*`
       : '';
@@ -232,7 +233,7 @@ function CheckoutPage() {
             <div className="space-y-4 mb-6">
               {items.map(item => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span>{item.quantity}x {item.name}{item.size ? ` (${item.size})` : ''}</span>
+                  <span>{item.quantity}x {item.name}{item.color ? ` — ${item.color}` : ''}{item.size ? ` (${item.size})` : ''}</span>
                   <span className="font-bold">R$ {((item.promo_price || item.price) * item.quantity).toFixed(2)}</span>
                 </div>
               ))}

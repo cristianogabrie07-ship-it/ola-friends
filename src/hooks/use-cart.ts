@@ -9,15 +9,24 @@ export interface CartItem {
   image?: string | null | undefined;
   quantity: number;
   size?: string | null | undefined;
+  color?: string | null | undefined;
 }
 
 interface CartStore {
   items: CartItem[];
   addItem: (item: CartItem) => void;
-  removeItem: (id: string, size?: string) => void;
-  updateQuantity: (id: string, size: string | undefined, quantity: number) => void;
+  removeItem: (id: string, size?: string, color?: string) => void;
+  updateQuantity: (id: string, size: string | undefined, quantity: number, color?: string) => void;
   clearCart: () => void;
 }
+
+// Dois itens são o mesmo produto só se id + tamanho + cor forem iguais
+const sameVariant = (
+  item: CartItem,
+  id: string,
+  size?: string | null,
+  color?: string | null
+) => item.id === id && (item.size ?? undefined) === (size ?? undefined) && (item.color ?? undefined) === (color ?? undefined);
 
 // Helpers puros — calculam sempre em cima dos items atuais.
 // (Não usar getters no store: o merge do persist no zustand converte
@@ -39,14 +48,14 @@ export const useCart = create<CartStore>()(
       items: [],
       addItem: (newItem: CartItem) => {
         const items = get().items;
-        const existingItem = items.find(
-          (item) => item.id === newItem.id && item.size === newItem.size
+        const existingItem = items.find((item) =>
+          sameVariant(item, newItem.id, newItem.size, newItem.color ?? undefined)
         );
 
         if (existingItem) {
           set({
             items: items.map((item) =>
-              item.id === newItem.id && item.size === newItem.size
+              sameVariant(item, newItem.id, newItem.size, newItem.color ?? undefined)
                 ? { ...item, quantity: item.quantity + newItem.quantity }
                 : item
             ),
@@ -55,19 +64,19 @@ export const useCart = create<CartStore>()(
           set({ items: [...items, newItem] });
         }
       },
-      removeItem: (id: string, size?: string) => {
+      removeItem: (id: string, size?: string, color?: string) => {
         set({
-          items: get().items.filter((item) => !(item.id === id && item.size === size)),
+          items: get().items.filter((item) => !sameVariant(item, id, size, color)),
         });
       },
-      updateQuantity: (id: string, size: string | undefined, quantity: number) => {
+      updateQuantity: (id: string, size: string | undefined, quantity: number, color?: string) => {
         if (quantity <= 0) {
-          get().removeItem(id, size);
+          get().removeItem(id, size, color);
           return;
         }
         set({
           items: get().items.map((item) =>
-            item.id === id && item.size === size ? { ...item, quantity } : item
+            sameVariant(item, id, size, color) ? { ...item, quantity } : item
           ),
         });
       },

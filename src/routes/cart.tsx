@@ -37,7 +37,7 @@ function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-6">
             {items.map((item) => (
-              <div key={`${item.id}-${item.size}`} className="flex gap-4 border-b border-[#C9A84C22] pb-6">
+              <div key={`${item.id}-${item.size}-${item.color ?? ""}`} className="flex gap-4 border-b border-[#C9A84C22] pb-6">
                 <div className="w-24 h-32 flex-shrink-0 bg-[#1A1A1A] rounded-lg overflow-hidden">
                   {item.image && (
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -48,25 +48,26 @@ function CartPage() {
                     <div className="flex justify-between items-start">
                       <h3 className="font-bold uppercase text-sm text-white">{item.name}</h3>
                       <button
-                        onClick={() => removeItem(item.id, item.size ?? undefined)}
+                        onClick={() => removeItem(item.id, item.size ?? undefined, item.color ?? undefined)}
                         className="text-[#666] hover:text-red-400 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
+                    {item.color && <p className="text-xs text-[#888] mt-1">Cor: {item.color}</p>}
                     {item.size && <p className="text-xs text-[#888] mt-1">Tamanho: {item.size}</p>}
                   </div>
                   <div className="flex justify-between items-center mt-4">
                     <div className="flex items-center border border-[#C9A84C33] rounded-lg overflow-hidden">
                       <button
-                        onClick={() => updateQuantity(item.id, item.size ?? undefined, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.size ?? undefined, item.quantity - 1, item.color ?? undefined)}
                         className="p-2 text-[#C9A84C] hover:bg-[#1A1A1A] transition-colors"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="px-4 text-sm font-bold text-white">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.size ?? undefined, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.id, item.size ?? undefined, item.quantity + 1, item.color ?? undefined)}
                         className="p-2 text-[#C9A84C] hover:bg-[#1A1A1A] transition-colors"
                       >
                         <Plus className="w-3 h-3" />
