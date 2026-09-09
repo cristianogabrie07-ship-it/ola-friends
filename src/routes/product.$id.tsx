@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Play } from "lucide-react";
+import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { ShoppingCart, Heart, Truck, RefreshCcw, Package } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { toast } from "sonner";
@@ -20,7 +20,7 @@ function ProductDetail() {
   const { id } = Route.useParams();
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [pinnedColor, setPinnedColor] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
@@ -41,12 +41,18 @@ function ProductDetail() {
   const colorVariants: ColorVariant[] = Array.isArray(product?.color_variants)
     ? (product.color_variants as unknown as ColorVariant[]).filter((v) => v?.name)
     : [];
-  const selectedVariant = colorVariants.find((v) => v.name === selectedColor);
-  const mediaItems = [
-    ...(selectedVariant?.image ? [{ type: "image" as const, url: selectedVariant.image }] : []),
-    ...(product?.video_url && !selectedVariant?.image ? [{ type: "video" as const, url: product.video_url }] : []),
-    ...(!selectedVariant?.image && product?.images?.[0] ? [{ type: "image" as const, url: product.images[0] }] : []),
+  // Galeria unificada: vídeo + foto principal + a foto de CADA COR.
+  // Passar pelas fotos = escolher a cor (a foto da cor é um slide da galeria).
+  const mediaItems: { type: "image" | "video"; url: string; colorName?: string }[] = [
+    ...(product?.video_url ? [{ type: "video" as const, url: product.video_url }] : []),
+    ...(product?.images?.[0] ? [{ type: "image" as const, url: product.images[0] }] : []),
+    ...colorVariants
+      .filter((v) => v.image)
+      .map((v) => ({ type: "image" as const, url: v.image, colorName: v.name })),
   ];
+  const activeItem: (typeof mediaItems)[number] | undefined = mediaItems[activeImage];
+  const selectedColor = activeItem?.colorName ?? pinnedColor;
+  const selectedVariant = colorVariants.find((v) => v.name === selectedColor);
 
   if (isLoading) {
     return (
@@ -123,7 +129,53 @@ function ProductDetail() {
                 </span>
               </div>
             )}
+            {activeItem?.colorName && (
+              <span className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#050505]/80 border border-[#C9A84C] text-white text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full">
+                Cor: {activeItem.colorName}
+              </span>
+            )}
+            {mediaItems.length > 1 && (
+              <>
+                <button
+                  onClick={() => {
+                    setActiveImage((activeImage - 1 + mediaItems.length) % mediaItems.length);
+                    setPinnedColor(null);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#050505]/70 border border-[#C9A84C44] text-white flex items-center justify-center hover:bg-[#050505]"
+                  aria-label="Foto anterior"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveImage((activeImage + 1) % mediaItems.length);
+                    setPinnedColor(null);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#050505]/70 border border-[#C9A84C44] text-white flex items-center justify-center hover:bg-[#050505]"
+                  aria-label="Próxima foto"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
           </div>
+          {mediaItems.length > 1 && (
+            <div className="flex justify-center gap-1.5">
+              {mediaItems.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setActiveImage(idx);
+                    setPinnedColor(null);
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    activeImage === idx ? "w-6 bg-[#C9A84C]" : "w-2 bg-[#C9A84C33]"
+                  }`}
+                  aria-label={`Ir para mídia ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
           {mediaItems.length > 1 && (
             <div className="grid grid-cols-2 gap-4 max-w-[240px]">
               {mediaItems.map((item, idx) => (
@@ -142,7 +194,14 @@ function ProductDetail() {
                       </span>
                     </>
                   ) : (
-                    <img src={item.url} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
+                    <span className="relative block w-full h-full">
+                      <img src={item.url} alt={`${product.name} ${idx}`} className="w-full h-full object-cover" />
+                      {item.colorName && (
+                        <span className="absolute inset-x-0 bottom-0 bg-black/60 text-[10px] text-white uppercase text-center py-0.5">
+                          {item.colorName}
+                        </span>
+                      )}
+                    </span>
                   )}
                 </button>
               ))}
@@ -181,8 +240,13 @@ function ProductDetail() {
                   <button
                     key={variant.name}
                     onClick={() => {
-                      setSelectedColor(variant.name);
-                      setActiveImage(0);
+                      const idx = mediaItems.findIndex((m) => m.colorName === variant.name);
+                      if (idx >= 0) {
+                        setActiveImage(idx);
+                        setPinnedColor(null);
+                      } else {
+                        setPinnedColor(variant.name);
+                      }
                     }}
                     className={`flex items-center gap-2 border-2 pl-1 pr-3 py-1 font-bold transition-all rounded-full ${
                       selectedColor === variant.name
