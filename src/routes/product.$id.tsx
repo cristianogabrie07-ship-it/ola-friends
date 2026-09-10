@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { ShoppingCart, Heart, Truck, RefreshCcw, Package } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
@@ -22,6 +22,7 @@ function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState("");
   const [pinnedColor, setPinnedColor] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -53,6 +54,30 @@ function ProductDetail() {
   const activeItem: (typeof mediaItems)[number] | undefined = mediaItems[activeImage];
   const selectedColor = activeItem?.colorName ?? pinnedColor;
   const selectedVariant = colorVariants.find((v) => v.name === selectedColor);
+
+  const goPrev = () => {
+    if (mediaItems.length < 2) return;
+    setActiveImage((i) => (i - 1 + mediaItems.length) % mediaItems.length);
+    setPinnedColor(null);
+  };
+  const goNext = () => {
+    if (mediaItems.length < 2) return;
+    setActiveImage((i) => (i + 1) % mediaItems.length);
+    setPinnedColor(null);
+  };
+
+  // Swipe de toque: arrastar para o lado troca a mídia (funciona no celular)
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || mediaItems.length < 2) return;
+    const dx = (e.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) < 40) return; // ignora toques curtos (cliques)
+    if (dx < 0) goNext();
+    else goPrev();
+  };
 
   if (isLoading) {
     return (
@@ -94,7 +119,11 @@ function ProductDetail() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Images */}
         <div className="space-y-4">
-          <div className="aspect-[4/5] bg-[#1A1A1A] overflow-hidden relative rounded-xl border border-[#C9A84C22]">
+          <div
+            className="aspect-[4/5] bg-[#1A1A1A] overflow-hidden relative rounded-xl border border-[#C9A84C22] touch-pan-y"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             {mediaItems[activeImage]?.type === "video" ? (
               <video
                 src={mediaItems[activeImage].url}
@@ -137,20 +166,14 @@ function ProductDetail() {
             {mediaItems.length > 1 && (
               <>
                 <button
-                  onClick={() => {
-                    setActiveImage((activeImage - 1 + mediaItems.length) % mediaItems.length);
-                    setPinnedColor(null);
-                  }}
+                  onClick={goPrev}
                   className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#050505]/70 border border-[#C9A84C44] text-white flex items-center justify-center hover:bg-[#050505]"
                   aria-label="Foto anterior"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => {
-                    setActiveImage((activeImage + 1) % mediaItems.length);
-                    setPinnedColor(null);
-                  }}
+                  onClick={goNext}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#050505]/70 border border-[#C9A84C44] text-white flex items-center justify-center hover:bg-[#050505]"
                   aria-label="Próxima foto"
                 >

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -29,8 +29,8 @@ export function ColorVariantsDialog({ product, onClose }: ColorVariantsDialogPro
   const [variants, setVariants] = useState<ColorVariant[]>([]);
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [uploadingColor, setUploadingColor] = useState<number | null>(null);
-  const [fileInputKey, setFileInputKey] = useState(0);
-  const pendingIndex = { current: -1 };
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingIndexRef = useRef<number>(-1);
 
   // Carrega as cores do produto quando o diálogo abre para outro produto
   if (product && loadedId !== product.id) {
@@ -48,17 +48,31 @@ export function ColorVariantsDialog({ product, onClose }: ColorVariantsDialogPro
       if (error) throw error;
       return clean;
     },
-    onSuccess: () => {
+    onSuccess: (clean) => {
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       queryClient.invalidateQueries({ queryKey: ["product"] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Cores salvas! Já aparecem na página do produto.");
+      queryClient.invalidateQueries({ queryKey: ["shop-products"] });
+      if (clean.some((v) => !v.image)) {
+        toast.warning("Cores salvas! Dica: cores sem foto não aparecem na galeria — adicione a foto de cada cor.");
+      } else {
+        toast.success("Cores salvas! Já aparecem na página do produto.");
+      }
       onClose();
     },
     onError: (error) => {
       toast.error(`Erro ao salvar cores: ${error.message}`);
     },
   });
+
+  const handleSave = () => {
+    const named = variants.filter((v) => v.name.trim());
+    if (variants.length > 0 && named.length === 0) {
+      toast.error("Digite o nome da cor antes de salvar (ex: Preto).");
+      return;
+    }
+    saveMutation.mutate();
+  };
 
   const uploadColorImage = async (file: File, index: number) => {
     setUploadingColor(index);
@@ -129,8 +143,8 @@ export function ColorVariantsDialog({ product, onClose }: ColorVariantsDialogPro
                     variant="outline"
                     disabled={uploadingColor !== null}
                     onClick={() => {
-                      pendingIndex.current = index;
-                      setFileInputKey((k) => k + 1);
+                      pendingIndexRef.current = index;
+                      fileInputRef.current?.click();
                     }}
                     className="w-full rounded-none border-neutral-300 uppercase text-xs"
                   >
@@ -170,19 +184,21 @@ export function ColorVariantsDialog({ product, onClose }: ColorVariantsDialogPro
           </Button>
 
           <input
-            key={fileInputKey}
+            ref={fileInputRef}
             type="file"
             accept="image/*"
             className="hidden"
-            onClick={(e) => ((e.target as HTMLInputElement).value = "")}
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file && pendingIndex.current >= 0) uploadColorImage(file, pendingIndex.current);
+              const idx = pendingIndexRef.current;
+              if (file && idx >= 0) uploadColorImage(file, idx);
+              pendingIndexRef.current = -1;
+              e.target.value = "";
             }}
           />
 
           <Button
-            onClick={() => saveMutation.mutate()}
+            onClick={handleSave}
             disabled={saveMutation.isPending}
             className="w-full bg-primary text-primary-foreground font-bungee tracking-tighter rounded-none"
           >
