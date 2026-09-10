@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tables } from "@/integrations/supabase/types";
-import { Edit, Trash2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Edit, Trash2, Eye, EyeOff, AlertCircle, Palette } from "lucide-react";
 
 interface ProductTableProps {
   products: (Tables<"products"> & { categories: { name: string } | null })[];
@@ -19,6 +19,7 @@ interface ProductTableProps {
   onDelete: (id: string) => void;
   onToggleActive: (id: string, current: boolean) => void;
   onUpdateStock: (id: string, stock: number) => void;
+  onEditColors: (product: Tables<"products">) => void;
 }
 
 export function ProductTable({
@@ -27,6 +28,7 @@ export function ProductTable({
   onDelete,
   onToggleActive,
   onUpdateStock,
+  onEditColors,
 }: ProductTableProps) {
   const [editingStock, setEditingStock] = useState<string | null>(null);
   const [tempStock, setTempStock] = useState<string>("");
@@ -61,7 +63,23 @@ export function ProductTable({
                   </div>
                 )}
               </TableCell>
-              <TableCell className="font-medium">{product.name}</TableCell>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-2">
+                  {product.name}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEditColors(product)}
+                    className="h-7 px-2 text-[10px] uppercase font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-none"
+                    title="Editar cores deste produto"
+                  >
+                    <Palette className="w-3 h-3 mr-1" />
+                    {Array.isArray(product.color_variants) && product.color_variants.length > 0
+                      ? `${product.color_variants.length} cor${product.color_variants.length > 1 ? "es" : ""}`
+                      : "Cores"}
+                  </Button>
+                </div>
+              </TableCell>
               <TableCell>
                 <Badge variant="secondary" className="rounded-none uppercase text-[9px]">
                   {product.categories?.name || "Sem categoria"}

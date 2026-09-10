@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductTable } from "@/components/admin/ProductTable";
 import { ProductForm } from "@/components/admin/ProductForm";
+import { ColorVariantsDialog } from "@/components/admin/ColorVariantsDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ function ProductsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Tables<"products"> | null>(null);
+  const [colorDialogProduct, setColorDialogProduct] = useState<Tables<"products"> | null>(null);
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({
     queryKey: ["admin-products"],
@@ -153,6 +155,7 @@ function ProductsPage() {
         onDelete={(id) => deleteMutation.mutate(id)}
         onToggleActive={(id, current) => toggleActiveMutation.mutate({ id, is_active: !current })}
         onUpdateStock={(id, stock) => updateMutation.mutate({ id, stock })}
+        onEditColors={(product) => setColorDialogProduct(product)}
       />
 
       <ProductForm
@@ -166,7 +169,10 @@ function ProductsPage() {
         categories={categories || []}
       />
 
-
+      <ColorVariantsDialog
+        product={colorDialogProduct}
+        onClose={() => setColorDialogProduct(null)}
+      />
     </div>
   );
 }
