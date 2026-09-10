@@ -138,6 +138,15 @@ function ProductsPage() {
         </Button>
       </div>
 
+      <div className="border border-amber-500/50 bg-amber-500/10 p-4 text-sm space-y-1">
+        <p className="font-bold uppercase text-amber-600">⚠️ Produto com várias cores? NÃO crie outro produto!</p>
+        <p className="text-muted-foreground">
+          Clique em <strong>Editar</strong> (lápis) no produto e use a seção <strong>"Cores Disponíveis (variações)"</strong> para
+          adicionar cada cor com a foto dela — tudo fica no <strong>mesmo produto</strong>, e o cliente escolhe a cor na
+          página dele. Criar um produto por cor divide as vendas e repete o produto na loja.
+        </p>
+      </div>
+
       <ProductTable
         products={products || []}
         onEdit={handleEdit}
