@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -102,6 +102,31 @@ export function ProductForm({ open, onOpenChange, onSubmit, initialData, categor
     },  });
 
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>(initialData?.color_variants || []);
+
+  // Re-sincroniza o formulário SEMPRE que o diálogo abre: preenche tudo quando é
+  // "Editar" (nome, preço, foto, vídeo, tamanhos e cores já cadastradas) e limpa
+  // tudo quando é "Novo Produto". Sem isso, o formulário nascia em branco ao editar.
+  useEffect(() => {
+    if (!open) return;
+    form.reset({
+      name: initialData?.name || "",
+      description: initialData?.description || null,
+      price: initialData?.price || 0,
+      promo_price: initialData?.promo_price || null,
+      category_id: initialData?.category_id || "",
+      stock: initialData?.stock || 0,
+      is_active: initialData?.is_active ?? true,
+      is_sold_out: initialData?.is_sold_out ?? false,
+      sizes: initialData?.sizes || [],
+      images: initialData?.images || [],
+      video_url: initialData?.video_url || null,
+      water_resistance: initialData?.water_resistance || null,
+      color_variants: initialData?.color_variants || [],
+    });
+    setColorVariants(initialData?.color_variants || []);
+    setUploadError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialData]);
 
   const [uploading, setUploading] = useState<"image" | "video" | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);

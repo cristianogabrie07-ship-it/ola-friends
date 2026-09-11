@@ -27,16 +27,17 @@ interface ColorVariantsDialogProps {
 export function ColorVariantsDialog({ product, onClose }: ColorVariantsDialogProps) {
   const queryClient = useQueryClient();
   const [variants, setVariants] = useState<ColorVariant[]>([]);
-  const [loadedId, setLoadedId] = useState<string | null>(null);
   const [uploadingColor, setUploadingColor] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingIndexRef = useRef<number>(-1);
+  const lastOpenIdRef = useRef<string | null>(null);
 
-  // Carrega as cores do produto quando o diálogo abre para outro produto
-  if (product && loadedId !== product.id) {
-    setLoadedId(product.id);
+  // Carrega as cores do produto SEMPRE que o diálogo abre (null -> produto).
+  // Assim, se o dono salvar, fechar e reabrir, vê sempre os dados atualizados do banco.
+  if (product && lastOpenIdRef.current === null) {
     setVariants(Array.isArray(product.color_variants) ? (product.color_variants as unknown as ColorVariant[]) : []);
   }
+  lastOpenIdRef.current = product?.id ?? null;
 
   const saveMutation = useMutation({
     mutationFn: async () => {
